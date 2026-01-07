@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -22,7 +22,7 @@ model Settings {
 // Daily aggregate log
 model DailyLog {
   id          Int      @id @default(autoincrement())
-  date        DateTime @unique @db.Date
+  date        DateTime @unique
   totalPoints Int      @default(0)
   perfectDay  Boolean  @default(false)
   createdAt   DateTime @default(now())
@@ -31,7 +31,7 @@ model DailyLog {
 // Body Tracking
 model BodyMetric {
   id              Int      @id @default(autoincrement())
-  date            DateTime @unique @db.Date
+  date            DateTime @unique
   weight          Float? // in kg
   bodyFatPercent  Float?
   musclePercent   Float?
@@ -41,7 +41,7 @@ model BodyMetric {
 
 model ProgressPhoto {
   id        Int      @id @default(autoincrement())
-  date      DateTime @db.Date
+  date      DateTime
   type      String // front, back, side
   filePath  String
   createdAt DateTime @default(now())
@@ -82,7 +82,7 @@ model TimeActivity {
 
 model TimeEntry {
   id              Int          @id @default(autoincrement())
-  date            DateTime     @db.Date
+  date            DateTime
   activityId      Int
   activity        TimeActivity @relation(fields: [activityId], references: [id], onDelete: Cascade)
   startTime       DateTime?
@@ -100,27 +100,21 @@ model TimeGoal {
 }
 
 // Medication Tracking
-enum MedicationFrequency {
-  ONCE      // Once daily
-  TWICE     // Twice daily (morning and evening)
-  THRICE    // Three times daily (morning, afternoon, evening)
-}
-
 model Medication {
-  id        Int                 @id @default(autoincrement())
+  id        Int             @id @default(autoincrement())
   name      String
   dosage    String?
-  isChronic Boolean             @default(true)
-  frequency MedicationFrequency @default(ONCE)
-  active    Boolean             @default(true)
-  createdAt DateTime            @default(now())
-  updatedAt DateTime            @updatedAt
+  isChronic Boolean         @default(true)
+  frequency String          @default("ONCE") // ONCE, TWICE, THRICE
+  active    Boolean         @default(true)
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
   logs      MedicationLog[]
 }
 
 model MedicationLog {
   id           Int        @id @default(autoincrement())
-  date         DateTime   @db.Date
+  date         DateTime
   medicationId Int
   medication   Medication @relation(fields: [medicationId], references: [id], onDelete: Cascade)
   timeOfDay    String // morning, afternoon, evening
@@ -133,7 +127,7 @@ model MedicationLog {
 // Pushup Tracking
 model PushupLog {
   id        Int      @id @default(autoincrement())
-  date      DateTime @db.Date
+  date      DateTime
   count     Int
   createdAt DateTime @default(now())
 }
@@ -159,7 +153,7 @@ model Dog {
 
 model DogWalk {
   id              Int          @id @default(autoincrement())
-  date            DateTime     @db.Date
+  date            DateTime
   durationMinutes Int
   distanceKm      Float?
   steps           Int?
@@ -183,7 +177,7 @@ model DogWalkDog {
 // Oral Hygiene Tracking
 model OralHygieneLog {
   id           Int      @id @default(autoincrement())
-  date         DateTime @unique @db.Date
+  date         DateTime @unique
   morningBrush Boolean  @default(false)
   eveningBrush Boolean  @default(false)
   eveningFloss Boolean  @default(false)
@@ -206,23 +200,21 @@ model Achievement {
 
 model UserAchievement {
   id            Int         @id @default(autoincrement())
-  achievementId Int
+  achievementId Int         @unique
   achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
   unlockedAt    DateTime    @default(now())
-
-  @@unique([achievementId])
 }
 
 // Gamification - Streaks
 model Streak {
-  id           Int      @id @default(autoincrement())
+  id           Int       @id @default(autoincrement())
   type         String // perfect_day, showed_up, module
-  moduleKey    String? // For module-specific streaks: body, time, medication, pushups, dogs, oral
-  currentCount Int      @default(0)
-  longestCount Int      @default(0)
-  lastDate     DateTime? @db.Date
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  moduleKey    String    @default("") // For module-specific streaks: body, time, medication, pushups, dogs, oral. Empty string for global streaks.
+  currentCount Int       @default(0)
+  longestCount Int       @default(0)
+  lastDate     DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
   @@unique([type, moduleKey])
 }

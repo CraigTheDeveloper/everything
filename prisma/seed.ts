@@ -112,10 +112,10 @@ async function main() {
   });
   console.log('Level seeded');
 
-  // Seed Streaks
+  // Seed Streaks - use empty string for global streaks since null doesn't work with unique constraint
   const streakTypes = [
-    { type: 'perfect_day', moduleKey: null },
-    { type: 'showed_up', moduleKey: null },
+    { type: 'perfect_day', moduleKey: '' },
+    { type: 'showed_up', moduleKey: '' },
     { type: 'module', moduleKey: 'body' },
     { type: 'module', moduleKey: 'time' },
     { type: 'module', moduleKey: 'medication' },
