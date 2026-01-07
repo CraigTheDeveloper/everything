@@ -1,0 +1,676 @@
+<project_specification>
+  <project_name>Everything</project_name>
+
+  <overview>
+    A personal habit/goal tracker and central life database for a single user. The app combines multiple tracking modules (body metrics, time, medication, pushups, dog walks, oral hygiene) with a comprehensive gamification system to motivate long-term consistency. Mobile-first responsive design with light/dark theme support.
+  </overview>
+
+  <technology_stack>
+    <frontend>
+      <framework>Next.js with TypeScript</framework>
+      <styling>Tailwind CSS with shadcn/ui components</styling>
+      <state_management>React state / Context API</state_management>
+    </frontend>
+    <backend>
+      <runtime>Next.js API Routes (Node.js)</runtime>
+      <database>PostgreSQL</database>
+      <orm>Prisma</orm>
+    </backend>
+    <communication>
+      <api>REST API via Next.js API routes</api>
+    </communication>
+    <deployment>
+      <environment>Local only - no deployment</environment>
+    </deployment>
+  </technology_stack>
+
+  <prerequisites>
+    <environment_setup>
+      - Node.js 18+ installed
+      - PostgreSQL installed and running locally
+      - Local folder for storing progress photos
+    </environment_setup>
+  </prerequisites>
+
+  <feature_count>170</feature_count>
+
+  <security_and_access_control>
+    <user_roles>
+      <role name="owner">
+        <permissions>
+          - Full access to all features (single user app)
+          - No authentication required (local only)
+        </permissions>
+      </role>
+    </user_roles>
+    <authentication>
+      <method>None - single user local app</method>
+      <session_timeout>None</session_timeout>
+    </authentication>
+    <data_integrity>
+      - Same-day only logging: users can only create/edit records for the current day (system time)
+      - Historical data is read-only and cannot be modified
+      - This enforces data honesty and integrity
+    </data_integrity>
+  </security_and_access_control>
+
+  <core_features>
+    <body_tracking>
+      - Daily weight capture (kg) - single input field
+      - Daily body fat % capture - single input field
+      - Daily muscle % capture - single input field
+      - Progress photo upload - front view (stored locally, path in DB)
+      - Progress photo upload - back view (stored locally, path in DB)
+      - Progress photo upload - side view (stored locally, path in DB)
+      - Goal setting: target weight
+      - Goal setting: target body fat %
+      - Goal setting: rate of loss (kg per week)
+      - View historical body metrics in chart form
+      - View historical progress photos in gallery/timeline
+      - Weight trend chart over time
+      - Body fat % trend chart over time
+      - Muscle % trend chart over time
+      - Points: 1 point for logging all 3 metrics
+      - Points: 1 point for uploading all 3 photos
+      - Same-day only validation
+    </body_tracking>
+
+    <time_tracking>
+      - Start/stop timer for current activity
+      - Manual time entry (activity, duration, date=today)
+      - Predefined categories: Work, Study, Self-Improvement, Hobbies, Social, Time Wasting, Other
+      - Predefined activities linked to categories
+      - Create custom activities linked to categories
+      - Edit custom activities
+      - Delete custom activities
+      - "Time Wasting" is a specific category for tracking wasteful time
+      - Set daily maximum time wasting goal (minutes)
+      - View time spent today by category (pie chart or bar)
+      - View time spent today by activity (detailed breakdown)
+      - View historical time data
+      - Points: 1 point for staying under time wasting goal
+      - Same-day only validation for entries
+    </time_tracking>
+
+    <medication_tracking>
+      - Create medication: name, dosage, type (chronic/temporary)
+      - Edit medication details
+      - Delete medication
+      - Set frequency: once daily (morning OR evening)
+      - Set frequency: twice daily (morning AND evening)
+      - Set frequency: three times daily (morning, afternoon, evening)
+      - Chronic medications are automatically scheduled daily
+      - View today's medication schedule
+      - Mark medication as taken (morning slot)
+      - Mark medication as taken (afternoon slot)
+      - Mark medication as taken (evening slot)
+      - View compliance % per medication (taken/scheduled)
+      - View overall compliance % across all medications
+      - Compliance charts and statistics
+      - Points: 1 point per chronic medication fully taken for the day
+      - Same-day only validation
+    </medication_tracking>
+
+    <pushup_tracking>
+      - Log pushups with custom amount input
+      - Increment buttons for quick logging
+      - Quick action buttons: +10, +15, +20
+      - 2026 yearly goal: 36,500 pushups (configurable)
+      - Display: total completed / 36,500
+      - Display: current required daily pace (remaining / remaining days)
+      - Display: progress bar to yearly goal
+      - Daily pushup history
+      - Pushup trend charts
+      - Same-day only validation
+    </pushup_tracking>
+
+    <dog_walk_tracking>
+      - Manage dogs: add dog with name and photo
+      - Manage dogs: edit dog name/photo
+      - Manage dogs: delete dog
+      - Dog selector dropdown showing name + photo thumbnail
+      - Log walk: select one or multiple dogs
+      - Log walk: duration (minutes)
+      - Log walk: distance (km)
+      - Log walk: steps
+      - Log walk: average heart rate
+      - Log walk: pace (min/km)
+      - Log walk: comments/notes
+      - View total distance walked (all dogs)
+      - View total duration walked (all dogs)
+      - View number of walks per dog
+      - View overall walk statistics
+      - Walk history list/calendar view
+      - Same-day only validation
+    </dog_walk_tracking>
+
+    <oral_hygiene_tracking>
+      - Mark morning brush as complete (checkbox)
+      - Mark evening brush as complete (checkbox)
+      - Mark evening floss as complete (checkbox)
+      - Calendar view with color coding:
+        - Green: all 3 completed
+        - Yellow: 2 of 3 completed
+        - Orange: 1 of 3 completed
+        - Red: 0 of 3 completed
+      - View historical oral hygiene data
+      - Points: 1 point per item completed (max 3 per day)
+      - Same-day only validation
+    </oral_hygiene_tracking>
+
+    <gamification>
+      <points_system>
+        - Daily points: sum of all points earned that day
+        - Weekly score: sum of daily points with consistency multiplier
+        - Monthly score: sum with bonus for sustained effort
+        - Lifetime total: all-time accumulated points
+        - Points displayed prominently on home page
+      </points_system>
+
+      <streaks>
+        - Perfect Day Streak: consecutive days with 100% completion across all modules
+        - Module-specific streaks: per-module consecutive completion
+        - "Showed Up" Streak: days where user logged anything (gentler streak)
+        - Streak display with current count and longest count
+        - Visual streak indicators (fire icon, etc.)
+      </streaks>
+
+      <xp_and_levels>
+        - Earn XP from points and achievements
+        - Level system: Level 1 through Level 50+
+        - Progressive XP requirements per level
+        - Level titles: Novice, Dedicated, Committed, Unstoppable, Legend, etc.
+        - Level and XP progress bar always visible in sidebar
+      </xp_and_levels>
+
+      <achievements>
+        - First Steps: Complete your first day
+        - On Fire: 7-day perfect streak
+        - Iron Will: 30-day perfect streak
+        - Documented: 30 days of progress photos
+        - Dog Whisperer: 100 total dog walks
+        - Compliant: 95%+ medication compliance for a month
+        - Pearly Whites: 30-day oral hygiene streak
+        - Time Lord: Stay under time wasting goal for 7 days straight
+        - Century Club: 100 pushups in a single day
+        - Pushup Champion: Hit 36,500 yearly pushup goal
+        - Additional achievements for each module milestone
+        - Hidden achievements (not revealed until earned)
+        - Achievement notification/celebration when unlocked
+        - Achievement gallery/collection view
+      </achievements>
+
+      <visual_progress>
+        - Heat map calendar (like GitHub contributions)
+        - Progress rings for daily completion (like Apple Watch)
+        - Trend charts showing improvement over time
+        - Milestone celebrations with animations
+      </visual_progress>
+
+      <motivation_mechanics>
+        - Random bonus points (variable reward)
+        - Comeback bonus: extra points for returning after missed day
+        - Streak freeze tokens: earned through consistency, can preserve streak
+        - Use streak freeze when missing a day
+        - No shame messaging - encouraging tone throughout
+      </motivation_mechanics>
+    </gamification>
+
+    <home_page>
+      - Today's date display
+      - Daily points earned so far
+      - Progress indicators for each module (completed/pending)
+      - Quick actions: log pushups (+10, +15, +20, custom)
+      - Quick actions: quick medication check-off
+      - Quick actions: oral hygiene checkboxes
+      - Current active streaks display
+      - Recent achievements display
+      - Level and XP progress
+      - Motivational message or stat
+    </home_page>
+
+    <settings>
+      - Theme toggle: light/dark mode
+      - Theme persistence (saved preference)
+      - Export data to JSON
+      - Export data to CSV
+      - Configure photo storage directory path
+      - Manage pushup yearly goal
+      - Manage time wasting goal
+    </settings>
+
+    <ui_ux>
+      - Mobile-first responsive design
+      - Bottom navigation bar on mobile (thumb-friendly)
+      - Sidebar navigation on desktop
+      - Touch-friendly tap targets (min 44px)
+      - Cards stack vertically on mobile, grid on desktop
+      - Charts resize/simplify for smaller screens
+      - Loading states for all async operations
+      - Error states with clear messaging
+      - Empty states when no data exists
+      - Toast notifications for actions
+      - Confirmation dialogs for destructive actions
+    </ui_ux>
+
+    <automation>
+      - Daily medication schedule generation (midnight)
+      - Achievement check after each action
+      - Streak calculation after each day
+      - Points calculation in real-time
+      - XP and level updates automatic
+    </automation>
+  </core_features>
+
+  <database_schema>
+    <tables>
+      <Settings>
+        - id, theme (light/dark), photoDirectory, createdAt, updatedAt
+      </Settings>
+
+      <DailyLog>
+        - id, date (unique), totalPoints, perfectDay (boolean), createdAt
+      </DailyLog>
+
+      <BodyMetric>
+        - id, date (unique), weight, bodyFatPercent, musclePercent, pointsEarned, createdAt
+      </BodyMetric>
+
+      <ProgressPhoto>
+        - id, date, type (front/back/side), filePath, createdAt
+        - Unique constraint on date + type
+      </ProgressPhoto>
+
+      <BodyGoal>
+        - id, targetWeight, targetBodyFatPercent, weeklyLossRate, createdAt, updatedAt
+      </BodyGoal>
+
+      <TimeCategory>
+        - id, name, isWasteful (boolean), isSystem (boolean), createdAt
+      </TimeCategory>
+
+      <TimeActivity>
+        - id, name, categoryId (FK), isSystem (boolean), createdAt
+      </TimeActivity>
+
+      <TimeEntry>
+        - id, date, activityId (FK), startTime, endTime, durationMinutes, isManual (boolean), createdAt
+      </TimeEntry>
+
+      <TimeGoal>
+        - id, maxWasteMinutes, createdAt, updatedAt
+      </TimeGoal>
+
+      <Medication>
+        - id, name, dosage, isChronic (boolean), frequency (ONCE/TWICE/THRICE), active (boolean), createdAt, updatedAt
+      </Medication>
+
+      <MedicationLog>
+        - id, date, medicationId (FK), timeOfDay (morning/afternoon/evening), taken (boolean), createdAt
+        - Unique constraint on date + medicationId + timeOfDay
+      </MedicationLog>
+
+      <PushupLog>
+        - id, date, count, createdAt
+      </PushupLog>
+
+      <PushupGoal>
+        - id, year, yearlyTarget, createdAt, updatedAt
+      </PushupGoal>
+
+      <Dog>
+        - id, name, photoPath, active (boolean), createdAt, updatedAt
+      </Dog>
+
+      <DogWalk>
+        - id, date, durationMinutes, distanceKm, steps, avgHeartRate, paceMinPerKm, comments, createdAt
+      </DogWalk>
+
+      <DogWalkDog>
+        - id, walkId (FK), dogId (FK)
+        - Junction table for many-to-many
+      </DogWalkDog>
+
+      <OralHygieneLog>
+        - id, date (unique), morningBrush (boolean), eveningBrush (boolean), eveningFloss (boolean), pointsEarned, createdAt
+      </OralHygieneLog>
+
+      <Achievement>
+        - id, key (unique), name, description, icon, isHidden (boolean), xpReward, createdAt
+      </Achievement>
+
+      <UserAchievement>
+        - id, achievementId (FK), unlockedAt
+      </UserAchievement>
+
+      <Streak>
+        - id, type (perfect_day/showed_up/module), moduleKey (nullable), currentCount, longestCount, lastDate, createdAt, updatedAt
+      </Streak>
+
+      <Level>
+        - id, currentXP, currentLevel, createdAt, updatedAt
+      </Level>
+
+      <StreakFreeze>
+        - id, earnedAt, usedAt (nullable)
+      </StreakFreeze>
+    </tables>
+  </database_schema>
+
+  <api_endpoints_summary>
+    <settings>
+      - GET /api/settings - get current settings
+      - PUT /api/settings - update settings
+    </settings>
+
+    <body>
+      - GET /api/body/metrics - get metrics (with date filter)
+      - POST /api/body/metrics - create today's metrics
+      - GET /api/body/photos - get photos (with date filter)
+      - POST /api/body/photos - upload today's photo
+      - GET /api/body/goals - get current goals
+      - PUT /api/body/goals - update goals
+      - GET /api/body/stats - get charts/statistics data
+    </body>
+
+    <time>
+      - GET /api/time/categories - list categories
+      - POST /api/time/categories - create category
+      - PUT /api/time/categories/:id - update category
+      - DELETE /api/time/categories/:id - delete category
+      - GET /api/time/activities - list activities
+      - POST /api/time/activities - create activity
+      - PUT /api/time/activities/:id - update activity
+      - DELETE /api/time/activities/:id - delete activity
+      - GET /api/time/entries - get entries (with date filter)
+      - POST /api/time/entries - create manual entry
+      - POST /api/time/entries/start - start timer
+      - POST /api/time/entries/:id/stop - stop timer
+      - GET /api/time/goals - get time goals
+      - PUT /api/time/goals - update time goals
+      - GET /api/time/stats - get time statistics
+    </time>
+
+    <medication>
+      - GET /api/medication/medicines - list all medications
+      - POST /api/medication/medicines - create medication
+      - PUT /api/medication/medicines/:id - update medication
+      - DELETE /api/medication/medicines/:id - delete medication
+      - GET /api/medication/schedule - get today's schedule
+      - GET /api/medication/logs - get logs (with date filter)
+      - POST /api/medication/logs - log medication taken
+      - GET /api/medication/stats - get compliance statistics
+    </medication>
+
+    <pushups>
+      - GET /api/pushups/logs - get logs (with date filter)
+      - POST /api/pushups/logs - log pushups
+      - GET /api/pushups/goals - get yearly goal
+      - PUT /api/pushups/goals - update yearly goal
+      - GET /api/pushups/stats - get progress statistics
+    </pushups>
+
+    <dogs>
+      - GET /api/dogs - list all dogs
+      - POST /api/dogs - create dog
+      - PUT /api/dogs/:id - update dog
+      - DELETE /api/dogs/:id - delete/deactivate dog
+      - GET /api/dogs/walks - get walks (with date filter)
+      - POST /api/dogs/walks - log walk
+      - GET /api/dogs/stats - get walk statistics
+    </dogs>
+
+    <oral>
+      - GET /api/oral/logs - get logs (with date filter)
+      - POST /api/oral/logs - create/update today's log
+      - GET /api/oral/stats - get calendar and statistics
+    </oral>
+
+    <gamification>
+      - GET /api/gamification/points - get points (daily/weekly/monthly/lifetime)
+      - GET /api/gamification/streaks - get all streaks
+      - GET /api/gamification/achievements - get all achievements with unlock status
+      - GET /api/gamification/level - get current XP and level
+      - POST /api/gamification/freeze - use a streak freeze
+      - POST /api/gamification/check - trigger achievement/streak recalculation
+    </gamification>
+
+    <dashboard>
+      - GET /api/dashboard/today - get home page data
+      - GET /api/dashboard/overview - get overall statistics
+    </dashboard>
+
+    <export>
+      - GET /api/export/json - export all data as JSON
+      - GET /api/export/csv - export all data as CSV (zip file)
+    </export>
+  </api_endpoints_summary>
+
+  <ui_layout>
+    <main_structure>
+      Mobile-first responsive layout:
+
+      MOBILE (bottom nav):
+      - Header: "Everything" logo, theme toggle, hamburger for settings
+      - Main content: full width, scrollable
+      - Bottom tab bar: Home, Body, Time, Meds, Pushups, Dogs, Oral
+      - Quick access to achievements/stats via hamburger menu
+
+      DESKTOP (sidebar):
+      - Left sidebar: navigation links, level/XP progress at bottom
+      - Main content area: wider layouts, multi-column where useful
+      - Header: "Everything" logo, theme toggle, settings icon
+    </main_structure>
+
+    <page_layouts>
+      Home Page:
+      - Today's summary card (date, total points)
+      - Module progress grid (each module's status)
+      - Quick actions section
+      - Active streaks display
+      - Recent achievements
+
+      Module Pages (Body, Time, Meds, etc.):
+      - Quick log/entry section at top
+      - Stats and charts below
+      - History/calendar view at bottom
+
+      Achievements Page:
+      - Grid of achievement badges
+      - Unlocked vs locked visual distinction
+      - Hidden achievements show as "???"
+
+      Settings Page:
+      - Theme toggle
+      - Export buttons
+      - Goal configuration
+      - Photo directory setting
+    </page_layouts>
+  </ui_layout>
+
+  <design_system>
+    <color_palette>
+      Light theme:
+      - Background: white/gray-50
+      - Primary: blue-600
+      - Success: green-500
+      - Warning: yellow-500
+      - Error: red-500
+      - Text: gray-900
+
+      Dark theme:
+      - Background: gray-900/gray-950
+      - Primary: blue-400
+      - Success: green-400
+      - Warning: yellow-400
+      - Error: red-400
+      - Text: gray-100
+
+      Module accent colors:
+      - Body: purple
+      - Time: blue
+      - Medication: green
+      - Pushups: orange
+      - Dogs: amber
+      - Oral: cyan
+    </color_palette>
+
+    <typography>
+      - Font: System font stack (native look)
+      - Headings: Bold, clear hierarchy
+      - Body: Regular weight, readable
+      - Numbers/stats: Tabular figures, slightly larger
+    </typography>
+
+    <components>
+      - Use shadcn/ui components throughout
+      - Cards for grouping related content
+      - Buttons with clear states (default, hover, active, disabled)
+      - Form inputs with validation states
+      - Toast notifications for feedback
+      - Modals for confirmations and detailed views
+    </components>
+  </design_system>
+
+  <implementation_steps>
+    <step number="1">
+      <title>Foundation Setup</title>
+      <tasks>
+        - Initialize Next.js project with TypeScript
+        - Set up Tailwind CSS
+        - Install and configure shadcn/ui
+        - Set up PostgreSQL database
+        - Configure Prisma ORM with schema
+        - Run initial migrations
+        - Create basic layout (header, sidebar/bottom nav)
+        - Implement theme toggle with persistence
+        - Create settings page skeleton
+      </tasks>
+    </step>
+
+    <step number="2">
+      <title>Simple Tracking Modules</title>
+      <tasks>
+        - Implement Oral Hygiene module (simplest)
+          - Checkboxes for morning brush, evening brush, evening floss
+          - Calendar view with color coding
+          - Points calculation
+        - Implement Pushup Tracking module
+          - Quick log buttons (+10, +15, +20, custom)
+          - Progress display (completed/goal, pace)
+          - History and charts
+        - Implement Body Tracking module
+          - Metric input form (weight, body fat %, muscle %)
+          - Photo upload with local storage
+          - Goal setting
+          - Charts and photo gallery
+      </tasks>
+    </step>
+
+    <step number="3">
+      <title>Complex Tracking Modules</title>
+      <tasks>
+        - Implement Medication Tracking module
+          - CRUD for medications
+          - Frequency settings
+          - Daily schedule generation
+          - Medication logging
+          - Compliance statistics
+        - Implement Dog Walk Tracking module
+          - CRUD for dogs (with photos)
+          - Walk logging with multi-dog selection
+          - Walk statistics
+        - Implement Time Tracking module
+          - Category and activity management
+          - Start/stop timer
+          - Manual entry
+          - Time wasting goal tracking
+          - Time distribution charts
+      </tasks>
+    </step>
+
+    <step number="4">
+      <title>Gamification System</title>
+      <tasks>
+        - Implement Points system
+          - Daily/weekly/monthly/lifetime calculations
+          - Point display on home page
+        - Implement Streaks
+          - Perfect day, showed up, and module streaks
+          - Streak freeze mechanics
+          - Streak display and notifications
+        - Implement XP and Levels
+          - XP calculation from points and achievements
+          - Level progression
+          - Level display in sidebar
+        - Implement Achievements
+          - Achievement definitions and unlock logic
+          - Achievement check automation
+          - Achievement gallery
+          - Unlock celebrations
+        - Implement Variable Rewards
+          - Random bonus points
+          - Comeback bonuses
+      </tasks>
+    </step>
+
+    <step number="5">
+      <title>Dashboard and Polish</title>
+      <tasks>
+        - Build Home Page
+          - Today's summary
+          - Module progress grid
+          - Quick actions
+          - Streaks and achievements display
+        - Implement Charts and Visualizations
+          - Heat map calendar
+          - Progress rings
+          - Trend charts per module
+        - Add Export Functionality
+          - JSON export
+          - CSV export
+        - Polish and Refinement
+          - Loading states
+          - Error handling
+          - Empty states
+          - Animations and transitions
+          - Mobile testing and optimization
+          - Accessibility improvements
+      </tasks>
+    </step>
+  </implementation_steps>
+
+  <success_criteria>
+    <functionality>
+      - All 6 tracking modules fully functional
+      - Same-day only logging enforced across all modules
+      - All data persists correctly in PostgreSQL
+      - Gamification system motivates consistent use
+      - Export functionality works for backup/portability
+    </functionality>
+
+    <user_experience>
+      - Mobile-first design works well on phone
+      - Quick actions make daily logging fast
+      - Charts and stats are motivating and informative
+      - Theme toggle works with persistence
+      - Navigation is intuitive
+    </user_experience>
+
+    <technical_quality>
+      - TypeScript types throughout
+      - Prisma schema properly defined
+      - API endpoints follow REST conventions
+      - No console errors
+      - Proper error handling
+    </technical_quality>
+
+    <design_polish>
+      - Consistent use of shadcn/ui components
+      - Proper spacing and typography
+      - Smooth transitions and loading states
+      - Celebratory feedback for achievements
+      - Professional, motivating aesthetic
+    </design_polish>
+  </success_criteria>
+</project_specification>

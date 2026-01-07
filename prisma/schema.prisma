@@ -1,0 +1,244 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Application Settings
+model Settings {
+  id             Int      @id @default(autoincrement())
+  theme          String   @default("light") // light or dark
+  photoDirectory String   @default("./uploads/photos")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+// Daily aggregate log
+model DailyLog {
+  id          Int      @id @default(autoincrement())
+  date        DateTime @unique @db.Date
+  totalPoints Int      @default(0)
+  perfectDay  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}
+
+// Body Tracking
+model BodyMetric {
+  id              Int      @id @default(autoincrement())
+  date            DateTime @unique @db.Date
+  weight          Float? // in kg
+  bodyFatPercent  Float?
+  musclePercent   Float?
+  pointsEarned    Int      @default(0)
+  createdAt       DateTime @default(now())
+}
+
+model ProgressPhoto {
+  id        Int      @id @default(autoincrement())
+  date      DateTime @db.Date
+  type      String // front, back, side
+  filePath  String
+  createdAt DateTime @default(now())
+
+  @@unique([date, type])
+}
+
+model BodyGoal {
+  id                   Int      @id @default(autoincrement())
+  targetWeight         Float?
+  targetBodyFatPercent Float?
+  weeklyLossRate       Float?   @default(0.5) // kg per week
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+
+// Time Tracking
+model TimeCategory {
+  id         Int            @id @default(autoincrement())
+  name       String         @unique
+  isWasteful Boolean        @default(false)
+  isSystem   Boolean        @default(false) // System categories can't be deleted
+  createdAt  DateTime       @default(now())
+  activities TimeActivity[]
+}
+
+model TimeActivity {
+  id         Int          @id @default(autoincrement())
+  name       String
+  categoryId Int
+  category   TimeCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  isSystem   Boolean      @default(false)
+  createdAt  DateTime     @default(now())
+  entries    TimeEntry[]
+
+  @@unique([name, categoryId])
+}
+
+model TimeEntry {
+  id              Int          @id @default(autoincrement())
+  date            DateTime     @db.Date
+  activityId      Int
+  activity        TimeActivity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  startTime       DateTime?
+  endTime         DateTime?
+  durationMinutes Int
+  isManual        Boolean      @default(false)
+  createdAt       DateTime     @default(now())
+}
+
+model TimeGoal {
+  id              Int      @id @default(autoincrement())
+  maxWasteMinutes Int      @default(60) // Default 60 minutes of max time wasting
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// Medication Tracking
+enum MedicationFrequency {
+  ONCE      // Once daily
+  TWICE     // Twice daily (morning and evening)
+  THRICE    // Three times daily (morning, afternoon, evening)
+}
+
+model Medication {
+  id        Int                 @id @default(autoincrement())
+  name      String
+  dosage    String?
+  isChronic Boolean             @default(true)
+  frequency MedicationFrequency @default(ONCE)
+  active    Boolean             @default(true)
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+  logs      MedicationLog[]
+}
+
+model MedicationLog {
+  id           Int        @id @default(autoincrement())
+  date         DateTime   @db.Date
+  medicationId Int
+  medication   Medication @relation(fields: [medicationId], references: [id], onDelete: Cascade)
+  timeOfDay    String // morning, afternoon, evening
+  taken        Boolean    @default(false)
+  createdAt    DateTime   @default(now())
+
+  @@unique([date, medicationId, timeOfDay])
+}
+
+// Pushup Tracking
+model PushupLog {
+  id        Int      @id @default(autoincrement())
+  date      DateTime @db.Date
+  count     Int
+  createdAt DateTime @default(now())
+}
+
+model PushupGoal {
+  id           Int      @id @default(autoincrement())
+  year         Int      @unique
+  yearlyTarget Int      @default(36500)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// Dog Walk Tracking
+model Dog {
+  id        Int           @id @default(autoincrement())
+  name      String
+  photoPath String?
+  active    Boolean       @default(true)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  walks     DogWalkDog[]
+}
+
+model DogWalk {
+  id              Int          @id @default(autoincrement())
+  date            DateTime     @db.Date
+  durationMinutes Int
+  distanceKm      Float?
+  steps           Int?
+  avgHeartRate    Int?
+  paceMinPerKm    Float?
+  comments        String?
+  createdAt       DateTime     @default(now())
+  dogs            DogWalkDog[]
+}
+
+model DogWalkDog {
+  id     Int     @id @default(autoincrement())
+  walkId Int
+  walk   DogWalk @relation(fields: [walkId], references: [id], onDelete: Cascade)
+  dogId  Int
+  dog    Dog     @relation(fields: [dogId], references: [id], onDelete: Cascade)
+
+  @@unique([walkId, dogId])
+}
+
+// Oral Hygiene Tracking
+model OralHygieneLog {
+  id           Int      @id @default(autoincrement())
+  date         DateTime @unique @db.Date
+  morningBrush Boolean  @default(false)
+  eveningBrush Boolean  @default(false)
+  eveningFloss Boolean  @default(false)
+  pointsEarned Int      @default(0)
+  createdAt    DateTime @default(now())
+}
+
+// Gamification - Achievements
+model Achievement {
+  id          Int               @id @default(autoincrement())
+  key         String            @unique
+  name        String
+  description String
+  icon        String?
+  isHidden    Boolean           @default(false)
+  xpReward    Int               @default(100)
+  createdAt   DateTime          @default(now())
+  unlocks     UserAchievement[]
+}
+
+model UserAchievement {
+  id            Int         @id @default(autoincrement())
+  achievementId Int
+  achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+  unlockedAt    DateTime    @default(now())
+
+  @@unique([achievementId])
+}
+
+// Gamification - Streaks
+model Streak {
+  id           Int      @id @default(autoincrement())
+  type         String // perfect_day, showed_up, module
+  moduleKey    String? // For module-specific streaks: body, time, medication, pushups, dogs, oral
+  currentCount Int      @default(0)
+  longestCount Int      @default(0)
+  lastDate     DateTime? @db.Date
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([type, moduleKey])
+}
+
+// Gamification - Level System
+model Level {
+  id           Int      @id @default(autoincrement())
+  currentXP    Int      @default(0)
+  currentLevel Int      @default(1)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// Gamification - Streak Freeze Tokens
+model StreakFreeze {
+  id       Int       @id @default(autoincrement())
+  earnedAt DateTime  @default(now())
+  usedAt   DateTime?
+}
