@@ -4,6 +4,15 @@ import { useState, useEffect, useCallback } from 'react'
 import { format } from 'date-fns'
 import { useToast } from '@/components/ui/use-toast'
 import Link from 'next/link'
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts'
 
 interface BodyMetric {
   id: number
@@ -21,6 +30,13 @@ interface ProgressPhoto {
   filePath: string
 }
 
+interface BodyGoal {
+  id: number
+  targetWeight: number | null
+  targetBodyFatPercent: number | null
+  weeklyLossRate: number | null
+}
+
 export default function BodyPage() {
   const [weight, setWeight] = useState('')
   const [bodyFat, setBodyFat] = useState('')
@@ -29,6 +45,13 @@ export default function BodyPage() {
   const [recentMetrics, setRecentMetrics] = useState<BodyMetric[]>([])
   const [todayPhotos, setTodayPhotos] = useState<ProgressPhoto[]>([])
   const [uploadingPhoto, setUploadingPhoto] = useState<string | null>(null)
+  const [allPhotos, setAllPhotos] = useState<ProgressPhoto[]>([])
+  const [selectedPhoto, setSelectedPhoto] = useState<ProgressPhoto | null>(null)
+  const [bodyGoal, setBodyGoal] = useState<BodyGoal | null>(null)
+  const [targetWeight, setTargetWeight] = useState('')
+  const [targetBodyFat, setTargetBodyFat] = useState('')
+  const [weeklyLossRate, setWeeklyLossRate] = useState('')
+  const [isSavingGoals, setIsSavingGoals] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const { toast } = useToast()
 
@@ -62,6 +85,25 @@ export default function BodyPage() {
       if (photosResponse.ok) {
         const data = await photosResponse.json()
         setTodayPhotos(data.photos || [])
+      }
+
+      // Fetch all recent photos for gallery
+      const allPhotosResponse = await fetch('/api/body/photos')
+      if (allPhotosResponse.ok) {
+        const data = await allPhotosResponse.json()
+        setAllPhotos(data.photos || [])
+      }
+
+      // Fetch body goals
+      const goalsResponse = await fetch('/api/body/goals')
+      if (goalsResponse.ok) {
+        const data = await goalsResponse.json()
+        if (data.goal) {
+          setBodyGoal(data.goal)
+          setTargetWeight(data.goal.targetWeight?.toString() || '')
+          setTargetBodyFat(data.goal.targetBodyFatPercent?.toString() || '')
+          setWeeklyLossRate(data.goal.weeklyLossRate?.toString() || '')
+        }
       }
     } catch (error) {
       console.error('Error fetching body data:', error)
@@ -109,6 +151,49 @@ export default function BodyPage() {
 
   const getPhotoByType = (type: 'front' | 'back' | 'side') => {
     return todayPhotos.find(p => p.type === type)
+  }
+
+  const handleSaveGoals = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsSavingGoals(true)
+    try {
+      const response = await fetch('/api/body/goals', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          targetWeight: targetWeight ? parseFloat(targetWeight) : null,
+          targetBodyFatPercent: targetBodyFat ? parseFloat(targetBodyFat) : null,
+          weeklyLossRate: weeklyLossRate ? parseFloat(weeklyLossRate) : null,
+        }),
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        setBodyGoal(data.goal)
+        toast({
+          title: 'Success!',
+          description: data.message,
+        })
+      } else {
+        const error = await response.json()
+        toast({
+          title: 'Error',
+          description: error.error || 'Failed to save goals',
+          variant: 'destructive',
+        })
+      }
+    } catch (error) {
+      console.error('Error saving goals:', error)
+      toast({
+        title: 'Error',
+        description: 'Failed to save goals',
+        variant: 'destructive',
+      })
+    } finally {
+      setIsSavingGoals(false)
+    }
   }
 
   useEffect(() => {
@@ -295,6 +380,162 @@ export default function BodyPage() {
           )}
         </div>
 
+        {/* Photo Gallery/Timeline */}
+        {allPhotos.length > 0 && (
+          <div className="mb-8 rounded-lg border bg-card p-6 shadow-sm">
+            <h2 className="mb-4 text-xl font-semibold">Photo Gallery</h2>
+            <div className="space-y-6">
+              {/* Group photos by date */}
+              {Object.entries(
+                allPhotos.reduce((acc, photo) => {
+                  const dateKey = format(new Date(photo.date), 'yyyy-MM-dd')
+                  if (!acc[dateKey]) acc[dateKey] = []
+                  acc[dateKey].push(photo)
+                  return acc
+                }, {} as Record<string, ProgressPhoto[]>)
+              )
+                .sort(([a], [b]) => b.localeCompare(a)) // Sort dates descending
+                .map(([dateKey, photos]) => (
+                  <div key={dateKey}>
+                    <h3 className="mb-3 text-sm font-medium text-muted-foreground">
+                      {format(new Date(dateKey), 'EEEE, MMMM d, yyyy')}
+                    </h3>
+                    <div className="grid grid-cols-3 gap-4">
+                      {(['front', 'back', 'side'] as const).map((type) => {
+                        const photo = photos.find((p) => p.type === type)
+                        return (
+                          <div
+                            key={type}
+                            className="relative aspect-[3/4] overflow-hidden rounded-lg border bg-muted/50"
+                          >
+                            {photo ? (
+                              <button
+                                onClick={() => setSelectedPhoto(photo)}
+                                className="h-full w-full"
+                              >
+                                <img
+                                  src={photo.filePath}
+                                  alt={`${type} view - ${dateKey}`}
+                                  className="h-full w-full cursor-pointer object-cover transition-transform hover:scale-105"
+                                />
+                              </button>
+                            ) : (
+                              <div className="flex h-full items-center justify-center">
+                                <span className="text-xs text-muted-foreground capitalize">
+                                  No {type}
+                                </span>
+                              </div>
+                            )}
+                            <span className="absolute bottom-1 left-1 rounded bg-black/50 px-1.5 py-0.5 text-xs capitalize text-white">
+                              {type}
+                            </span>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </div>
+        )}
+
+        {/* Photo Modal */}
+        {selectedPhoto && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+            onClick={() => setSelectedPhoto(null)}
+          >
+            <div className="relative max-h-[90vh] max-w-4xl">
+              <img
+                src={selectedPhoto.filePath}
+                alt={`${selectedPhoto.type} view`}
+                className="max-h-[90vh] rounded-lg object-contain"
+              />
+              <div className="absolute bottom-4 left-4 rounded bg-black/50 px-3 py-1.5 text-white">
+                <span className="capitalize">{selectedPhoto.type}</span> -{' '}
+                {format(new Date(selectedPhoto.date), 'MMMM d, yyyy')}
+              </div>
+              <button
+                onClick={() => setSelectedPhoto(null)}
+                className="absolute right-2 top-2 rounded-full bg-black/50 p-2 text-white hover:bg-black/70"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Body Goals */}
+        <div className="mb-8 rounded-lg border bg-card p-6 shadow-sm">
+          <h2 className="mb-4 text-xl font-semibold">Goals</h2>
+          <form onSubmit={handleSaveGoals} className="space-y-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+              <div>
+                <label htmlFor="targetWeight" className="mb-2 block text-sm font-medium">
+                  Target Weight (kg)
+                </label>
+                <input
+                  id="targetWeight"
+                  type="number"
+                  step="0.1"
+                  placeholder="e.g., 70"
+                  value={targetWeight}
+                  onChange={(e) => setTargetWeight(e.target.value)}
+                  className="w-full rounded-md border bg-input px-3 py-2"
+                />
+              </div>
+              <div>
+                <label htmlFor="targetBodyFat" className="mb-2 block text-sm font-medium">
+                  Target Body Fat (%)
+                </label>
+                <input
+                  id="targetBodyFat"
+                  type="number"
+                  step="0.1"
+                  placeholder="e.g., 12"
+                  value={targetBodyFat}
+                  onChange={(e) => setTargetBodyFat(e.target.value)}
+                  className="w-full rounded-md border bg-input px-3 py-2"
+                />
+              </div>
+              <div>
+                <label htmlFor="weeklyLossRate" className="mb-2 block text-sm font-medium">
+                  Weekly Loss Rate (kg)
+                </label>
+                <input
+                  id="weeklyLossRate"
+                  type="number"
+                  step="0.1"
+                  placeholder="e.g., 0.5"
+                  value={weeklyLossRate}
+                  onChange={(e) => setWeeklyLossRate(e.target.value)}
+                  className="w-full rounded-md border bg-input px-3 py-2"
+                />
+              </div>
+            </div>
+            <button
+              type="submit"
+              disabled={isSavingGoals}
+              className="rounded-md bg-body px-4 py-2 font-medium text-white hover:opacity-90 disabled:opacity-50"
+            >
+              {isSavingGoals ? 'Saving...' : 'Save Goals'}
+            </button>
+          </form>
+        </div>
+
         {/* Current Values Display */}
         {todayMetric && (
           <div className="mb-8 rounded-lg border bg-card p-6 shadow-sm">
@@ -324,6 +565,98 @@ export default function BodyPage() {
                 +{todayMetric.pointsEarned} point earned for logging all metrics!
               </p>
             )}
+          </div>
+        )}
+
+        {/* Metrics Charts */}
+        {recentMetrics.length > 1 && (
+          <div className="mb-8 rounded-lg border bg-card p-6 shadow-sm">
+            <h2 className="mb-4 text-xl font-semibold">Trends</h2>
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+              {/* Weight Chart */}
+              <div>
+                <h3 className="mb-2 text-sm font-medium text-muted-foreground">Weight (kg)</h3>
+                <div className="h-48">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart
+                      data={[...recentMetrics].reverse().map((m) => ({
+                        date: format(new Date(m.date), 'MMM d'),
+                        value: m.weight,
+                      }))}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+                      <YAxis domain={['auto', 'auto']} tick={{ fontSize: 12 }} />
+                      <Tooltip />
+                      <Line
+                        type="monotone"
+                        dataKey="value"
+                        stroke="#10b981"
+                        strokeWidth={2}
+                        dot={{ fill: '#10b981' }}
+                        name="Weight"
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              {/* Body Fat Chart */}
+              <div>
+                <h3 className="mb-2 text-sm font-medium text-muted-foreground">Body Fat (%)</h3>
+                <div className="h-48">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart
+                      data={[...recentMetrics].reverse().map((m) => ({
+                        date: format(new Date(m.date), 'MMM d'),
+                        value: m.bodyFatPercent,
+                      }))}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+                      <YAxis domain={['auto', 'auto']} tick={{ fontSize: 12 }} />
+                      <Tooltip />
+                      <Line
+                        type="monotone"
+                        dataKey="value"
+                        stroke="#f59e0b"
+                        strokeWidth={2}
+                        dot={{ fill: '#f59e0b' }}
+                        name="Body Fat"
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              {/* Muscle Chart */}
+              <div>
+                <h3 className="mb-2 text-sm font-medium text-muted-foreground">Muscle (%)</h3>
+                <div className="h-48">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart
+                      data={[...recentMetrics].reverse().map((m) => ({
+                        date: format(new Date(m.date), 'MMM d'),
+                        value: m.musclePercent,
+                      }))}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+                      <YAxis domain={['auto', 'auto']} tick={{ fontSize: 12 }} />
+                      <Tooltip />
+                      <Line
+                        type="monotone"
+                        dataKey="value"
+                        stroke="#3b82f6"
+                        strokeWidth={2}
+                        dot={{ fill: '#3b82f6' }}
+                        name="Muscle"
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
