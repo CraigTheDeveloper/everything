@@ -42,6 +42,8 @@ export default function TimePage() {
   const [showAddActivity, setShowAddActivity] = useState(false)
   const [newActivityName, setNewActivityName] = useState('')
   const [newActivityCategory, setNewActivityCategory] = useState<number | null>(null)
+  const [maxWasteMinutes, setMaxWasteMinutes] = useState(60)
+  const [maxWasteInput, setMaxWasteInput] = useState('')
   const { toast } = useToast()
 
   const today = new Date()
@@ -78,6 +80,16 @@ export default function TimePage() {
       if (entriesResponse.ok) {
         const data = await entriesResponse.json()
         setTodayEntries(data.entries || [])
+      }
+
+      // Fetch time goal
+      const goalResponse = await fetch('/api/time/goals')
+      if (goalResponse.ok) {
+        const data = await goalResponse.json()
+        if (data.goal) {
+          setMaxWasteMinutes(data.goal.maxWasteMinutes)
+          setMaxWasteInput(data.goal.maxWasteMinutes.toString())
+        }
       }
     } catch (error) {
       console.error('Error fetching time data:', error)
@@ -296,6 +308,53 @@ export default function TimePage() {
     }
   }
 
+  // Save time goal
+  const handleSaveGoal = async () => {
+    const minutes = parseInt(maxWasteInput)
+    if (isNaN(minutes) || minutes < 0) {
+      toast({
+        title: 'Error',
+        description: 'Please enter a valid number of minutes',
+        variant: 'destructive',
+      })
+      return
+    }
+
+    setIsLoading(true)
+    try {
+      const response = await fetch('/api/time/goals', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ maxWasteMinutes: minutes }),
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        setMaxWasteMinutes(data.goal.maxWasteMinutes)
+        toast({
+          title: 'Goal Saved!',
+          description: data.message,
+        })
+      } else {
+        const error = await response.json()
+        toast({
+          title: 'Error',
+          description: error.error || 'Failed to save goal',
+          variant: 'destructive',
+        })
+      }
+    } catch (error) {
+      console.error('Error saving goal:', error)
+      toast({
+        title: 'Error',
+        description: 'Failed to save goal',
+        variant: 'destructive',
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   // Calculate total time for today
   const totalMinutesToday = todayEntries.reduce((sum, entry) => sum + entry.durationMinutes, 0)
   const wastefulMinutesToday = todayEntries
@@ -475,6 +534,34 @@ export default function TimePage() {
           )}
         </div>
 
+        {/* Time Wasting Goal */}
+        <div className="mb-8 rounded-lg border bg-card p-6 shadow-sm">
+          <h2 className="mb-4 text-xl font-semibold">Daily Time Wasting Goal</h2>
+          <div className="flex flex-wrap items-end gap-4">
+            <div className="flex-1">
+              <label className="mb-2 block text-sm font-medium">Maximum Wasteful Time (minutes)</label>
+              <input
+                type="number"
+                value={maxWasteInput}
+                onChange={(e) => setMaxWasteInput(e.target.value)}
+                placeholder="e.g., 60"
+                className="w-full rounded-md border bg-input px-3 py-2"
+                min="0"
+              />
+            </div>
+            <button
+              onClick={handleSaveGoal}
+              disabled={isLoading}
+              className="rounded-md bg-time px-4 py-2 font-medium text-white hover:opacity-90 disabled:opacity-50"
+            >
+              Save Goal
+            </button>
+          </div>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Current goal: {maxWasteMinutes} minutes per day
+          </p>
+        </div>
+
         {/* Today's Summary */}
         <div className="mb-8 rounded-lg border bg-card p-6 shadow-sm">
           <h2 className="mb-4 text-xl font-semibold">Today's Summary</h2>
@@ -485,10 +572,13 @@ export default function TimePage() {
                 {Math.floor(totalMinutesToday / 60)}h {totalMinutesToday % 60}m
               </p>
             </div>
-            <div className="rounded-lg bg-red-500/10 p-4 text-center">
+            <div className={`rounded-lg p-4 text-center ${wastefulMinutesToday > maxWasteMinutes ? 'bg-red-500/20' : 'bg-red-500/10'}`}>
               <p className="text-sm text-muted-foreground">Wasteful Time</p>
-              <p className="text-2xl font-bold text-red-500">
+              <p className={`text-2xl font-bold ${wastefulMinutesToday > maxWasteMinutes ? 'text-red-600' : 'text-red-500'}`}>
                 {Math.floor(wastefulMinutesToday / 60)}h {wastefulMinutesToday % 60}m
+              </p>
+              <p className="text-xs text-muted-foreground">
+                / {maxWasteMinutes}m goal
               </p>
             </div>
           </div>
