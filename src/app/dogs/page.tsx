@@ -25,9 +25,28 @@ interface DogWalk {
   dogs: { dog: Dog }[]
 }
 
+interface WalkStats {
+  summary: {
+    totalWalks: number
+    totalDuration: number
+    totalDistance: number
+    totalSteps: number
+    avgDuration: number
+    avgDistance: number
+    avgHeartRate: number
+  }
+  walksPerDog: {
+    id: number
+    name: string
+    photoPath: string | null
+    walkCount: number
+  }[]
+}
+
 export default function DogsPage() {
   const [dogs, setDogs] = useState<Dog[]>([])
   const [walks, setWalks] = useState<DogWalk[]>([])
+  const [stats, setStats] = useState<WalkStats | null>(null)
   const [isAddingDog, setIsAddingDog] = useState(false)
   const [isLoggingWalk, setIsLoggingWalk] = useState(false)
   const [editingDog, setEditingDog] = useState<Dog | null>(null)
@@ -68,6 +87,13 @@ export default function DogsPage() {
       if (walksResponse.ok) {
         const data = await walksResponse.json()
         setWalks(data.walks || [])
+      }
+
+      // Fetch walk stats
+      const statsResponse = await fetch('/api/dogs/stats')
+      if (statsResponse.ok) {
+        const data = await statsResponse.json()
+        setStats(data)
       }
     } catch (error) {
       console.error('Error fetching dog data:', error)
@@ -606,6 +632,57 @@ export default function DogsPage() {
             </form>
           )}
         </div>
+
+        {/* Walk Statistics */}
+        {stats && (
+          <div className="mb-8 rounded-lg border bg-card p-6 shadow-sm">
+            <h2 className="mb-4 text-xl font-semibold">Walk Statistics</h2>
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+              <div className="rounded-lg bg-muted p-4 text-center">
+                <p className="text-2xl font-bold text-dogs">{stats.summary.totalWalks}</p>
+                <p className="text-xs text-muted-foreground">Total Walks</p>
+              </div>
+              <div className="rounded-lg bg-muted p-4 text-center">
+                <p className="text-2xl font-bold text-dogs">{stats.summary.totalDistance} km</p>
+                <p className="text-xs text-muted-foreground">Total Distance</p>
+              </div>
+              <div className="rounded-lg bg-muted p-4 text-center">
+                <p className="text-2xl font-bold text-dogs">{stats.summary.totalDuration} min</p>
+                <p className="text-xs text-muted-foreground">Total Duration</p>
+              </div>
+              <div className="rounded-lg bg-muted p-4 text-center">
+                <p className="text-2xl font-bold text-dogs">{stats.summary.totalSteps.toLocaleString()}</p>
+                <p className="text-xs text-muted-foreground">Total Steps</p>
+              </div>
+            </div>
+
+            {/* Walks Per Dog */}
+            {stats.walksPerDog.length > 0 && (
+              <div className="mt-6">
+                <h3 className="mb-3 text-sm font-medium">Walks Per Dog</h3>
+                <div className="space-y-2">
+                  {stats.walksPerDog.map((dog) => (
+                    <div key={dog.id} className="flex items-center justify-between border-b pb-2 last:border-0">
+                      <div className="flex items-center gap-2">
+                        {dog.photoPath ? (
+                          <img
+                            src={dog.photoPath}
+                            alt={dog.name}
+                            className="h-8 w-8 rounded-full object-cover"
+                          />
+                        ) : (
+                          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">🐕</span>
+                        )}
+                        <span className="font-medium">{dog.name}</span>
+                      </div>
+                      <span className="text-muted-foreground">{dog.walkCount} walks</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Recent Walks */}
         <div className="rounded-lg border bg-card p-6 shadow-sm">
