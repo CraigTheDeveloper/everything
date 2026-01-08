@@ -20,6 +20,17 @@ interface Achievement {
   unlockedAt: string
 }
 
+interface MedicationStatus {
+  id: number
+  name: string
+  dosage: string
+  frequency: string
+  slots: {
+    timeOfDay: string
+    taken: boolean
+  }[]
+}
+
 export default function Home() {
   const [pushupTotal, setPushupTotal] = useState(0)
   const [customPushups, setCustomPushups] = useState('')
@@ -31,6 +42,8 @@ export default function Home() {
   })
   const [oralCount, setOralCount] = useState(0)
   const [recentAchievements, setRecentAchievements] = useState<Achievement[]>([])
+  const [medications, setMedications] = useState<MedicationStatus[]>([])
+  const [medicationCount, setMedicationCount] = useState({ complete: 0, total: 0 })
   const { toast } = useToast()
 
   const today = new Date()
@@ -66,6 +79,19 @@ export default function Home() {
       if (achievementsResponse.ok) {
         const data = await achievementsResponse.json()
         setRecentAchievements(data.achievements || [])
+      }
+
+      // Fetch medication status
+      const medicationResponse = await fetch(`/api/medication/status?date=${todayString}`)
+      if (medicationResponse.ok) {
+        const data = await medicationResponse.json()
+        setMedications(data.medications || [])
+        setMedicationCount({
+          complete: data.medications?.filter((m: MedicationStatus) =>
+            m.slots.every(s => s.taken)
+          ).length || 0,
+          total: data.medications?.length || 0
+        })
       }
     } catch (error) {
       console.error('Error fetching today data:', error)
@@ -122,6 +148,56 @@ export default function Home() {
     const count = parseInt(customPushups, 10)
     if (count > 0) {
       logPushups(count)
+    }
+  }
+
+  // Toggle medication taken status
+  const toggleMedication = async (medicationId: number, timeOfDay: string, taken: boolean) => {
+    try {
+      const response = await fetch('/api/medication/logs', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          medicationId,
+          timeOfDay,
+          taken,
+        }),
+      })
+
+      if (response.ok) {
+        // Refresh medication status
+        const statusResponse = await fetch(`/api/medication/status?date=${todayString}`)
+        if (statusResponse.ok) {
+          const data = await statusResponse.json()
+          setMedications(data.medications || [])
+          setMedicationCount({
+            complete: data.medications?.filter((m: MedicationStatus) =>
+              m.slots.every((s: { taken: boolean }) => s.taken)
+            ).length || 0,
+            total: data.medications?.length || 0
+          })
+        }
+        toast({
+          title: taken ? 'Medication taken!' : 'Medication unmarked',
+          description: taken ? 'Great job staying on track!' : 'Updated medication log',
+        })
+      } else {
+        const error = await response.json()
+        toast({
+          title: 'Error',
+          description: error.error || 'Failed to update medication',
+          variant: 'destructive',
+        })
+      }
+    } catch (error) {
+      console.error('Error updating medication:', error)
+      toast({
+        title: 'Error',
+        description: 'Failed to update medication',
+        variant: 'destructive',
+      })
     }
   }
 
@@ -203,7 +279,11 @@ export default function Home() {
             <div className="rounded-lg border bg-card p-4 shadow-sm">
               <div className="mb-2 h-2 w-2 rounded-full bg-medication" />
               <h3 className="font-medium">Meds</h3>
-              <p className="text-sm text-muted-foreground">Not started</p>
+              <p className="text-sm text-muted-foreground">
+                {medicationCount.total > 0
+                  ? `${medicationCount.complete}/${medicationCount.total} complete`
+                  : 'No meds tracked'}
+              </p>
             </div>
 
             {/* Pushups Module */}
@@ -278,6 +358,39 @@ export default function Home() {
               </div>
             </div>
           </div>
+
+          {/* Medication Quick Actions */}
+          {medications.length > 0 && (
+            <div className="mb-4 rounded-lg border bg-card p-4 shadow-sm">
+              <h3 className="mb-3 font-medium">Medications</h3>
+              <div className="space-y-3">
+                {medications.map((med) => (
+                  <div key={med.id} className="flex flex-col gap-2">
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium text-sm">{med.name}</span>
+                      <span className="text-xs text-muted-foreground">{med.dosage}</span>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {med.slots.map((slot) => (
+                        <label
+                          key={`${med.id}-${slot.timeOfDay}`}
+                          className="flex cursor-pointer items-center gap-2"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={slot.taken}
+                            onChange={(e) => toggleMedication(med.id, slot.timeOfDay, e.target.checked)}
+                            className="h-5 w-5 rounded border-gray-300 text-medication focus:ring-medication"
+                          />
+                          <span className="text-xs capitalize">{slot.timeOfDay}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Oral Hygiene Quick Actions */}
           <div className="rounded-lg border bg-card p-4 shadow-sm">
