@@ -134,9 +134,27 @@ export async function POST(request: NextRequest) {
       })
     }
 
+    // Check if all 3 photos are now uploaded for today
+    const todayPhotos = await prisma.progressPhoto.findMany({
+      where: {
+        date: {
+          gte: today,
+          lt: endOfDay,
+        },
+      },
+    })
+
+    const hasAllPhotos = ['front', 'back', 'side'].every(
+      (t) => todayPhotos.some((p) => p.type === t)
+    )
+    const pointsEarned = hasAllPhotos ? 1 : 0
+
     return NextResponse.json({
       photo,
       message: `${type.charAt(0).toUpperCase() + type.slice(1)} photo uploaded successfully!`,
+      pointsEarned,
+      photosUploaded: todayPhotos.length,
+      allPhotosUploaded: hasAllPhotos,
     })
   } catch (error) {
     console.error('Error uploading progress photo:', error)

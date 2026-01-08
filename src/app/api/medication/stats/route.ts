@@ -74,8 +74,9 @@ export async function GET(request: NextRequest) {
     const totalTaken = medicationStats.reduce((sum, m) => sum + m.takenCount, 0)
     const overallCompliance = totalSlots > 0 ? Math.round((totalTaken / totalSlots) * 100) : 0
 
-    // Count complete medications
+    // Count complete medications - 1 point per fully taken medication
     const completeMedications = medicationStats.filter((m) => m.isComplete).length
+    const pointsEarned = completeMedications
 
     return NextResponse.json({
       date: targetDate.toISOString().split('T')[0],
@@ -86,6 +87,7 @@ export async function GET(request: NextRequest) {
         totalSlots,
         totalTaken,
         overallCompliance,
+        pointsEarned,
       },
     })
   } catch (error) {
