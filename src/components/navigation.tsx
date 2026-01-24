@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { ThemeToggle } from './theme-toggle'
 
 // Navigation items with icons, paths, and module colors
 const mainNavItems = [
@@ -226,8 +227,12 @@ export function Navigation({ children }: { children: React.ReactNode }) {
             </ul>
           </nav>
 
-          {/* Footer with branding */}
+          {/* Footer with theme toggle and branding */}
           <div className="border-t p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-muted-foreground">Theme</span>
+              <ThemeToggle />
+            </div>
             <p className="text-xs text-muted-foreground text-center">Personal Habit Tracker</p>
           </div>
         </div>
@@ -238,14 +243,17 @@ export function Navigation({ children }: { children: React.ReactNode }) {
         <Link href="/" className="flex items-center gap-2">
           <span className="text-xl font-bold text-primary">Everything</span>
         </Link>
-        <button
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="flex h-10 w-10 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-          aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
-          aria-expanded={mobileMenuOpen}
-        >
-          {mobileMenuOpen ? <CloseIcon className="h-6 w-6" /> : <MenuIcon className="h-6 w-6" />}
-        </button>
+        <div className="flex items-center gap-1">
+          <ThemeToggle />
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="flex h-10 w-10 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={mobileMenuOpen}
+          >
+            {mobileMenuOpen ? <CloseIcon className="h-6 w-6" /> : <MenuIcon className="h-6 w-6" />}
+          </button>
+        </div>
       </header>
 
       {/* Mobile Menu Overlay */}
