@@ -159,14 +159,14 @@ export function Navigation({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background bg-mesh-gradient">
       {/* Desktop Sidebar - hidden on mobile */}
-      <aside className="fixed left-0 top-0 z-40 hidden h-screen w-64 border-r bg-card lg:block">
+      <aside className="fixed left-0 top-0 z-40 hidden h-screen w-64 border-r bg-card/95 backdrop-blur-sm shadow-soft lg:block">
         <div className="flex h-full flex-col">
           {/* Logo/Brand */}
           <div className="flex h-16 items-center border-b px-6">
-            <Link href="/" className="flex items-center gap-2">
-              <span className="text-2xl font-bold text-primary">Everything</span>
+            <Link href="/" className="flex items-center gap-2 group">
+              <span className="text-2xl font-bold bg-gradient-to-r from-primary to-purple-500 bg-clip-text text-transparent group-hover:opacity-80 transition-opacity">Everything</span>
             </Link>
           </div>
 
@@ -180,16 +180,16 @@ export function Navigation({ children }: { children: React.ReactNode }) {
                   <li key={item.path}>
                     <Link
                       href={item.path}
-                      className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors
+                      className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200
                         ${active
-                          ? 'bg-primary/10 text-primary'
-                          : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                          ? 'bg-primary/10 text-primary shadow-sm'
+                          : 'text-muted-foreground hover:bg-muted hover:text-foreground hover:translate-x-1'
                         }
                         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2
                       `}
                       aria-current={active ? 'page' : undefined}
                     >
-                      <Icon className={`h-5 w-5 ${active ? item.color : ''}`} />
+                      <Icon className={`h-5 w-5 transition-transform ${active ? item.color : ''}`} />
                       {item.name}
                     </Link>
                   </li>
@@ -209,10 +209,10 @@ export function Navigation({ children }: { children: React.ReactNode }) {
                   <li key={item.path}>
                     <Link
                       href={item.path}
-                      className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors
+                      className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200
                         ${active
-                          ? 'bg-primary/10 text-primary'
-                          : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                          ? 'bg-primary/10 text-primary shadow-sm'
+                          : 'text-muted-foreground hover:bg-muted hover:text-foreground hover:translate-x-1'
                         }
                         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2
                       `}
@@ -228,7 +228,7 @@ export function Navigation({ children }: { children: React.ReactNode }) {
           </nav>
 
           {/* Footer with theme toggle and branding */}
-          <div className="border-t p-4">
+          <div className="border-t p-4 bg-muted/30">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm text-muted-foreground">Theme</span>
               <ThemeToggle />
@@ -239,15 +239,15 @@ export function Navigation({ children }: { children: React.ReactNode }) {
       </aside>
 
       {/* Mobile Header */}
-      <header className="fixed left-0 right-0 top-0 z-30 flex h-14 items-center justify-between border-b bg-card px-4 lg:hidden">
+      <header className="fixed left-0 right-0 top-0 z-30 flex h-14 items-center justify-between border-b bg-card/95 backdrop-blur-sm px-4 lg:hidden shadow-soft">
         <Link href="/" className="flex items-center gap-2">
-          <span className="text-xl font-bold text-primary">Everything</span>
+          <span className="text-xl font-bold bg-gradient-to-r from-primary to-purple-500 bg-clip-text text-transparent">Everything</span>
         </Link>
         <div className="flex items-center gap-1">
           <ThemeToggle />
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="flex h-10 w-10 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            className="flex h-10 w-10 items-center justify-center rounded-xl text-muted-foreground hover:bg-muted hover:text-foreground transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={mobileMenuOpen}
           >
@@ -259,7 +259,7 @@ export function Navigation({ children }: { children: React.ReactNode }) {
       {/* Mobile Menu Overlay */}
       {mobileMenuOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden"
           onClick={() => setMobileMenuOpen(false)}
           aria-hidden="true"
         />
@@ -267,7 +267,7 @@ export function Navigation({ children }: { children: React.ReactNode }) {
 
       {/* Mobile Slide-out Menu */}
       <div
-        className={`fixed right-0 top-0 z-50 h-full w-64 transform bg-card shadow-lg transition-transform duration-300 ease-in-out lg:hidden
+        className={`fixed right-0 top-0 z-50 h-full w-64 transform bg-card shadow-elevated transition-transform duration-300 ease-in-out lg:hidden
           ${mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}
         `}
         aria-hidden={!mobileMenuOpen}
@@ -276,7 +276,7 @@ export function Navigation({ children }: { children: React.ReactNode }) {
           <span className="font-semibold">Menu</span>
           <button
             onClick={() => setMobileMenuOpen(false)}
-            className="flex h-10 w-10 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            className="flex h-10 w-10 items-center justify-center rounded-xl text-muted-foreground hover:bg-muted hover:text-foreground transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             aria-label="Close menu"
           >
             <CloseIcon className="h-6 w-6" />
@@ -292,9 +292,9 @@ export function Navigation({ children }: { children: React.ReactNode }) {
                   <Link
                     href={item.path}
                     onClick={() => setMobileMenuOpen(false)}
-                    className={`flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-colors
+                    className={`flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition-all duration-200
                       ${active
-                        ? 'bg-primary/10 text-primary'
+                        ? 'bg-primary/10 text-primary shadow-sm'
                         : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                       }
                       focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary
@@ -314,7 +314,7 @@ export function Navigation({ children }: { children: React.ReactNode }) {
 
       {/* Mobile Bottom Navigation */}
       <nav
-        className="fixed bottom-0 left-0 right-0 z-30 border-t bg-card lg:hidden"
+        className="fixed bottom-0 left-0 right-0 z-30 border-t bg-card/95 backdrop-blur-sm shadow-soft lg:hidden"
         aria-label="Bottom navigation"
       >
         <ul className="flex h-16 items-center justify-around">
@@ -325,12 +325,12 @@ export function Navigation({ children }: { children: React.ReactNode }) {
               <li key={item.path}>
                 <Link
                   href={item.path}
-                  className={`flex flex-col items-center justify-center gap-0.5 px-3 py-2 text-xs font-medium transition-colors
+                  className={`flex flex-col items-center justify-center gap-0.5 px-3 py-2 text-xs font-medium transition-all duration-200
                     ${active
-                      ? `${item.color}`
+                      ? `${item.color} scale-110`
                       : 'text-muted-foreground hover:text-foreground'
                     }
-                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg
+                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-xl
                   `}
                   aria-current={active ? 'page' : undefined}
                 >
@@ -344,7 +344,7 @@ export function Navigation({ children }: { children: React.ReactNode }) {
           <li>
             <button
               onClick={() => setMobileMenuOpen(true)}
-              className="flex flex-col items-center justify-center gap-0.5 px-3 py-2 text-xs font-medium text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg"
+              className="flex flex-col items-center justify-center gap-0.5 px-3 py-2 text-xs font-medium text-muted-foreground hover:text-foreground transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-xl"
               aria-label="More navigation options"
             >
               <MenuIcon className="h-5 w-5" />

@@ -252,7 +252,7 @@ export default function Home() {
         </header>
 
         {/* Daily Points Card */}
-        <div className="mb-6 rounded-lg border bg-card p-6 shadow-sm">
+        <div className="mb-6 card-interactive p-6">
           <h2 className="text-sm font-medium text-muted-foreground">Daily Points</h2>
           <p className="text-4xl font-bold text-primary">0</p>
         </div>
@@ -262,21 +262,21 @@ export default function Home() {
           <h2 className="mb-4 text-xl font-semibold">Today's Progress</h2>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
             {/* Body Module */}
-            <div className="rounded-lg border bg-card p-4 shadow-sm">
+            <div className="module-card module-card-body cursor-pointer">
               <div className="mb-2 h-2 w-2 rounded-full bg-body" />
               <h3 className="font-medium">Body</h3>
               <p className="text-sm text-muted-foreground">Not started</p>
             </div>
 
             {/* Time Module */}
-            <div className="rounded-lg border bg-card p-4 shadow-sm">
+            <div className="module-card module-card-time cursor-pointer">
               <div className="mb-2 h-2 w-2 rounded-full bg-time" />
               <h3 className="font-medium">Time</h3>
               <p className="text-sm text-muted-foreground">Not started</p>
             </div>
 
             {/* Medication Module */}
-            <div className="rounded-lg border bg-card p-4 shadow-sm">
+            <div className="module-card module-card-medication cursor-pointer">
               <div className="mb-2 h-2 w-2 rounded-full bg-medication" />
               <h3 className="font-medium">Meds</h3>
               <p className="text-sm text-muted-foreground">
@@ -287,21 +287,21 @@ export default function Home() {
             </div>
 
             {/* Pushups Module */}
-            <div className="rounded-lg border bg-card p-4 shadow-sm">
+            <div className="module-card module-card-pushups cursor-pointer">
               <div className="mb-2 h-2 w-2 rounded-full bg-pushups" />
               <h3 className="font-medium">Pushups</h3>
               <p className="text-sm text-muted-foreground">{pushupTotal} today</p>
             </div>
 
             {/* Dogs Module */}
-            <div className="rounded-lg border bg-card p-4 shadow-sm">
+            <div className="module-card module-card-dogs cursor-pointer">
               <div className="mb-2 h-2 w-2 rounded-full bg-dogs" />
               <h3 className="font-medium">Dogs</h3>
               <p className="text-sm text-muted-foreground">No walks</p>
             </div>
 
             {/* Oral Module */}
-            <div className="rounded-lg border bg-card p-4 shadow-sm">
+            <div className="module-card module-card-oral cursor-pointer">
               <div className="mb-2 h-2 w-2 rounded-full bg-oral" />
               <h3 className="font-medium">Oral</h3>
               <p className="text-sm text-muted-foreground">{oralCount}/3 done</p>
@@ -314,44 +314,44 @@ export default function Home() {
           <h2 className="mb-4 text-xl font-semibold">Quick Actions</h2>
 
           {/* Pushups Quick Actions */}
-          <div className="mb-4 rounded-lg border bg-card p-4 shadow-sm">
+          <div className="mb-4 card-interactive p-4">
             <h3 className="mb-3 font-medium">Log Pushups</h3>
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={() => logPushups(10)}
                 disabled={isLoading}
-                className="touch-target rounded-md bg-pushups px-4 py-2 font-medium text-pushups-foreground hover:opacity-90 disabled:opacity-50"
+                className="touch-target btn-interactive rounded-lg bg-pushups px-4 py-2 font-medium text-pushups-foreground shadow-soft hover:shadow-elevated disabled:opacity-50"
               >
                 +10
               </button>
               <button
                 onClick={() => logPushups(15)}
                 disabled={isLoading}
-                className="touch-target rounded-md bg-pushups px-4 py-2 font-medium text-pushups-foreground hover:opacity-90 disabled:opacity-50"
+                className="touch-target btn-interactive rounded-lg bg-pushups px-4 py-2 font-medium text-pushups-foreground shadow-soft hover:shadow-elevated disabled:opacity-50"
               >
                 +15
               </button>
               <button
                 onClick={() => logPushups(20)}
                 disabled={isLoading}
-                className="touch-target rounded-md bg-pushups px-4 py-2 font-medium text-pushups-foreground hover:opacity-90 disabled:opacity-50"
+                className="touch-target btn-interactive rounded-lg bg-pushups px-4 py-2 font-medium text-pushups-foreground shadow-soft hover:shadow-elevated disabled:opacity-50"
               >
                 +20
               </button>
-              <div className="flex gap-1">
+              <div className="flex gap-2">
                 <input
                   type="number"
                   placeholder="Custom"
                   value={customPushups}
                   onChange={(e) => setCustomPushups(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleCustomSubmit()}
-                  className="touch-target w-24 rounded-md border bg-input px-3 py-2"
+                  className="touch-target input-polished w-24"
                   min="1"
                 />
                 <button
                   onClick={handleCustomSubmit}
                   disabled={isLoading || !customPushups}
-                  className="touch-target rounded-md bg-primary px-3 py-2 font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50"
+                  className="touch-target btn-interactive rounded-lg bg-primary px-4 py-2 font-medium text-primary-foreground shadow-soft hover:shadow-elevated disabled:opacity-50"
                 >
                   Add
                 </button>
@@ -361,7 +361,7 @@ export default function Home() {
 
           {/* Medication Quick Actions */}
           {medications.length > 0 && (
-            <div className="mb-4 rounded-lg border bg-card p-4 shadow-sm">
+            <div className="mb-4 card-interactive p-4">
               <h3 className="mb-3 font-medium">Medications</h3>
               <div className="space-y-3">
                 {medications.map((med) => (
@@ -393,7 +393,7 @@ export default function Home() {
           )}
 
           {/* Oral Hygiene Quick Actions */}
-          <div className="rounded-lg border bg-card p-4 shadow-sm">
+          <div className="card-interactive p-4">
             <h3 className="mb-3 font-medium">Oral Hygiene</h3>
             <div className="flex flex-wrap gap-4">
               <label className="flex cursor-pointer items-center gap-2">
@@ -431,14 +431,14 @@ export default function Home() {
         <div className="mb-6">
           <h2 className="mb-4 text-xl font-semibold">Active Streaks</h2>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <div className="flex items-center gap-3 rounded-lg border bg-card p-4 shadow-sm">
+            <div className="card-interactive flex items-center gap-3 p-4">
               <span className="text-2xl">🔥</span>
               <div>
                 <p className="font-medium">Perfect Day</p>
                 <p className="text-sm text-muted-foreground">0 days</p>
               </div>
             </div>
-            <div className="flex items-center gap-3 rounded-lg border bg-card p-4 shadow-sm">
+            <div className="card-interactive flex items-center gap-3 p-4">
               <span className="text-2xl">✅</span>
               <div>
                 <p className="font-medium">Showed Up</p>
@@ -456,7 +456,7 @@ export default function Home() {
               {recentAchievements.map((achievement) => (
                 <div
                   key={achievement.id}
-                  className="flex items-center gap-3 rounded-lg border bg-card p-4 shadow-sm"
+                  className="card-interactive flex items-center gap-3 p-4"
                 >
                   <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-xl">
                     🏆
@@ -471,7 +471,7 @@ export default function Home() {
               ))}
             </div>
           ) : (
-            <div className="rounded-lg border bg-card p-4 text-center text-muted-foreground shadow-sm">
+            <div className="card-interactive p-4 text-center text-muted-foreground">
               <p>No achievements unlocked yet. Keep tracking to earn badges!</p>
             </div>
           )}
@@ -480,7 +480,7 @@ export default function Home() {
         {/* Level Progress */}
         <div className="mb-6">
           <h2 className="mb-4 text-xl font-semibold">Level Progress</h2>
-          <div className="rounded-lg border bg-card p-4 shadow-sm">
+          <div className="card-interactive p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-2xl font-bold">Level 1</p>
@@ -488,8 +488,8 @@ export default function Home() {
               </div>
               <p className="text-sm text-muted-foreground">0 / 100 XP</p>
             </div>
-            <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-muted">
-              <div className="h-full w-0 rounded-full bg-primary transition-all" />
+            <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-muted">
+              <div className="h-full w-0 rounded-full bg-gradient-to-r from-primary to-primary/80 transition-all" />
             </div>
           </div>
         </div>
