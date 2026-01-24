@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { format } from 'date-fns'
 import { useToast } from '@/components/ui/use-toast'
 import Link from 'next/link'
+import { Input } from '@/components/ui/form-inputs'
 import {
   LineChart,
   Line,
@@ -273,55 +274,40 @@ export default function BodyPage() {
         {/* Today's Metrics Input */}
         <div className="mb-8 rounded-lg border bg-card p-6 shadow-sm">
           <h2 className="mb-4 text-xl font-semibold">Today's Metrics</h2>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-              <div>
-                <label htmlFor="weight" className="mb-2 block text-sm font-medium">
-                  Weight (kg)
-                </label>
-                <input
-                  id="weight"
-                  type="number"
-                  step="0.1"
-                  placeholder="e.g., 75.5"
-                  value={weight}
-                  onChange={(e) => setWeight(e.target.value)}
-                  className="w-full rounded-md border bg-input px-3 py-2"
-                />
-              </div>
-              <div>
-                <label htmlFor="bodyFat" className="mb-2 block text-sm font-medium">
-                  Body Fat (%)
-                </label>
-                <input
-                  id="bodyFat"
-                  type="number"
-                  step="0.1"
-                  placeholder="e.g., 15.5"
-                  value={bodyFat}
-                  onChange={(e) => setBodyFat(e.target.value)}
-                  className="w-full rounded-md border bg-input px-3 py-2"
-                />
-              </div>
-              <div>
-                <label htmlFor="muscle" className="mb-2 block text-sm font-medium">
-                  Muscle (%)
-                </label>
-                <input
-                  id="muscle"
-                  type="number"
-                  step="0.1"
-                  placeholder="e.g., 42.0"
-                  value={muscle}
-                  onChange={(e) => setMuscle(e.target.value)}
-                  className="w-full rounded-md border bg-input px-3 py-2"
-                />
-              </div>
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+              <Input
+                label="Weight (kg)"
+                type="number"
+                step="0.1"
+                placeholder="e.g., 75.5"
+                value={weight}
+                onChange={(e) => setWeight(e.target.value)}
+                variant="body"
+              />
+              <Input
+                label="Body Fat (%)"
+                type="number"
+                step="0.1"
+                placeholder="e.g., 15.5"
+                value={bodyFat}
+                onChange={(e) => setBodyFat(e.target.value)}
+                variant="body"
+              />
+              <Input
+                label="Muscle (%)"
+                type="number"
+                step="0.1"
+                placeholder="e.g., 42.0"
+                value={muscle}
+                onChange={(e) => setMuscle(e.target.value)}
+                variant="body"
+              />
             </div>
             <button
               type="submit"
               disabled={isLoading}
-              className="rounded-md bg-body px-4 py-2 font-medium text-white hover:opacity-90 disabled:opacity-50"
+              className="rounded-lg bg-body px-5 py-2.5 font-medium text-white hover:opacity-90 disabled:opacity-50 transition-all duration-200 shadow-sm hover:shadow-md"
             >
               {isLoading ? 'Saving...' : todayMetric ? 'Update Metrics' : 'Save Metrics'}
             </button>
@@ -481,55 +467,40 @@ export default function BodyPage() {
         {/* Body Goals */}
         <div className="mb-8 rounded-lg border bg-card p-6 shadow-sm">
           <h2 className="mb-4 text-xl font-semibold">Goals</h2>
-          <form onSubmit={handleSaveGoals} className="space-y-4">
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-              <div>
-                <label htmlFor="targetWeight" className="mb-2 block text-sm font-medium">
-                  Target Weight (kg)
-                </label>
-                <input
-                  id="targetWeight"
-                  type="number"
-                  step="0.1"
-                  placeholder="e.g., 70"
-                  value={targetWeight}
-                  onChange={(e) => setTargetWeight(e.target.value)}
-                  className="w-full rounded-md border bg-input px-3 py-2"
-                />
-              </div>
-              <div>
-                <label htmlFor="targetBodyFat" className="mb-2 block text-sm font-medium">
-                  Target Body Fat (%)
-                </label>
-                <input
-                  id="targetBodyFat"
-                  type="number"
-                  step="0.1"
-                  placeholder="e.g., 12"
-                  value={targetBodyFat}
-                  onChange={(e) => setTargetBodyFat(e.target.value)}
-                  className="w-full rounded-md border bg-input px-3 py-2"
-                />
-              </div>
-              <div>
-                <label htmlFor="weeklyLossRate" className="mb-2 block text-sm font-medium">
-                  Weekly Loss Rate (kg)
-                </label>
-                <input
-                  id="weeklyLossRate"
-                  type="number"
-                  step="0.1"
-                  placeholder="e.g., 0.5"
-                  value={weeklyLossRate}
-                  onChange={(e) => setWeeklyLossRate(e.target.value)}
-                  className="w-full rounded-md border bg-input px-3 py-2"
-                />
-              </div>
+          <form onSubmit={handleSaveGoals} className="space-y-5">
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+              <Input
+                label="Target Weight (kg)"
+                type="number"
+                step="0.1"
+                placeholder="e.g., 70"
+                value={targetWeight}
+                onChange={(e) => setTargetWeight(e.target.value)}
+                variant="body"
+              />
+              <Input
+                label="Target Body Fat (%)"
+                type="number"
+                step="0.1"
+                placeholder="e.g., 12"
+                value={targetBodyFat}
+                onChange={(e) => setTargetBodyFat(e.target.value)}
+                variant="body"
+              />
+              <Input
+                label="Weekly Loss Rate (kg)"
+                type="number"
+                step="0.1"
+                placeholder="e.g., 0.5"
+                value={weeklyLossRate}
+                onChange={(e) => setWeeklyLossRate(e.target.value)}
+                variant="body"
+              />
             </div>
             <button
               type="submit"
               disabled={isSavingGoals}
-              className="rounded-md bg-body px-4 py-2 font-medium text-white hover:opacity-90 disabled:opacity-50"
+              className="rounded-lg bg-body px-5 py-2.5 font-medium text-white hover:opacity-90 disabled:opacity-50 transition-all duration-200 shadow-sm hover:shadow-md"
             >
               {isSavingGoals ? 'Saving...' : 'Save Goals'}
             </button>

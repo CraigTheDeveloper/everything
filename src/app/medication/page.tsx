@@ -4,6 +4,8 @@ import { useState, useEffect, useCallback } from 'react'
 import { format } from 'date-fns'
 import { useToast } from '@/components/ui/use-toast'
 import Link from 'next/link'
+import { Spinner, EmptyState, CardSkeleton } from '@/components/ui/loading-states'
+import { Input, Select, Radio, RadioGroup, Checkbox } from '@/components/ui/form-inputs'
 
 interface Medication {
   id: number
@@ -339,91 +341,66 @@ export default function MedicationPage() {
           </div>
 
           {editingMedication && (
-            <form onSubmit={handleUpdateMedication} className="space-y-4 border-t pt-4">
-              <h3 className="font-medium">Edit Medication: {editingMedication.name}</h3>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div>
-                  <label htmlFor="editMedName" className="mb-2 block text-sm font-medium">
-                    Medication Name *
-                  </label>
-                  <input
-                    id="editMedName"
-                    type="text"
-                    placeholder="e.g., Aspirin"
-                    value={newMedName}
-                    onChange={(e) => setNewMedName(e.target.value)}
-                    className="w-full rounded-md border bg-input px-3 py-2"
-                    required
-                  />
-                </div>
-                <div>
-                  <label htmlFor="editMedDosage" className="mb-2 block text-sm font-medium">
-                    Dosage
-                  </label>
-                  <input
-                    id="editMedDosage"
-                    type="text"
-                    placeholder="e.g., 10mg"
-                    value={newMedDosage}
-                    onChange={(e) => setNewMedDosage(e.target.value)}
-                    className="w-full rounded-md border bg-input px-3 py-2"
-                  />
-                </div>
+            <form onSubmit={handleUpdateMedication} className="space-y-5 border-t pt-4">
+              <h3 className="font-medium text-medication">Edit Medication: {editingMedication.name}</h3>
+              <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                <Input
+                  label="Medication Name"
+                  placeholder="e.g., Aspirin"
+                  value={newMedName}
+                  onChange={(e) => setNewMedName(e.target.value)}
+                  variant="medication"
+                  required
+                />
+                <Input
+                  label="Dosage"
+                  placeholder="e.g., 10mg"
+                  value={newMedDosage}
+                  onChange={(e) => setNewMedDosage(e.target.value)}
+                  variant="medication"
+                />
               </div>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div>
-                  <label className="mb-2 block text-sm font-medium">Type</label>
-                  <div className="flex gap-4">
-                    <label className="flex items-center gap-2">
-                      <input
-                        type="radio"
-                        name="editMedType"
-                        checked={newMedIsChronic}
-                        onChange={() => setNewMedIsChronic(true)}
-                        className="h-4 w-4"
-                      />
-                      <span>Chronic</span>
-                    </label>
-                    <label className="flex items-center gap-2">
-                      <input
-                        type="radio"
-                        name="editMedType"
-                        checked={!newMedIsChronic}
-                        onChange={() => setNewMedIsChronic(false)}
-                        className="h-4 w-4"
-                      />
-                      <span>Temporary</span>
-                    </label>
-                  </div>
-                </div>
-                <div>
-                  <label htmlFor="editMedFrequency" className="mb-2 block text-sm font-medium">
-                    Frequency
-                  </label>
-                  <select
-                    id="editMedFrequency"
-                    value={newMedFrequency}
-                    onChange={(e) => setNewMedFrequency(e.target.value as 'ONCE' | 'TWICE' | 'THRICE')}
-                    className="w-full rounded-md border bg-input px-3 py-2"
-                  >
-                    <option value="ONCE">Once daily</option>
-                    <option value="TWICE">Twice daily</option>
-                    <option value="THRICE">Three times daily</option>
-                  </select>
-                </div>
+              <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                <RadioGroup label="Type">
+                  <Radio
+                    name="editMedType"
+                    label="Chronic"
+                    checked={newMedIsChronic}
+                    onChange={() => setNewMedIsChronic(true)}
+                    variant="medication"
+                  />
+                  <Radio
+                    name="editMedType"
+                    label="Temporary"
+                    checked={!newMedIsChronic}
+                    onChange={() => setNewMedIsChronic(false)}
+                    variant="medication"
+                  />
+                </RadioGroup>
+                <Select
+                  label="Frequency"
+                  value={newMedFrequency}
+                  onChange={(e) => setNewMedFrequency(e.target.value as 'ONCE' | 'TWICE' | 'THRICE')}
+                  variant="medication"
+                  options={[
+                    { value: 'ONCE', label: 'Once daily' },
+                    { value: 'TWICE', label: 'Twice daily' },
+                    { value: 'THRICE', label: 'Three times daily' },
+                  ]}
+                />
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-3">
                 <button
                   type="submit"
                   disabled={isSaving}
-                  className="rounded-md bg-medication px-4 py-2 font-medium text-white hover:opacity-90 disabled:opacity-50"
+                  className="rounded-lg bg-medication px-5 py-2.5 font-medium text-white hover:opacity-90 disabled:opacity-50 transition-all duration-200 shadow-sm hover:shadow-md"
                 >
                   {isSaving ? 'Saving...' : 'Update Medication'}
                 </button>
                 <button
                   type="button"
                   onClick={cancelEdit}
-                  className="rounded-md border px-4 py-2 font-medium hover:bg-muted"
+                  className="rounded-lg border-2 border-border px-5 py-2.5 font-medium hover:bg-muted transition-all duration-200"
                 >
                   Cancel
                 </button>
@@ -432,82 +409,57 @@ export default function MedicationPage() {
           )}
 
           {isAddingMedication && !editingMedication && (
-            <form onSubmit={handleAddMedication} className="space-y-4 border-t pt-4">
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div>
-                  <label htmlFor="medName" className="mb-2 block text-sm font-medium">
-                    Medication Name *
-                  </label>
-                  <input
-                    id="medName"
-                    type="text"
-                    placeholder="e.g., Aspirin"
-                    value={newMedName}
-                    onChange={(e) => setNewMedName(e.target.value)}
-                    className="w-full rounded-md border bg-input px-3 py-2"
-                    required
-                  />
-                </div>
-                <div>
-                  <label htmlFor="medDosage" className="mb-2 block text-sm font-medium">
-                    Dosage
-                  </label>
-                  <input
-                    id="medDosage"
-                    type="text"
-                    placeholder="e.g., 10mg"
-                    value={newMedDosage}
-                    onChange={(e) => setNewMedDosage(e.target.value)}
-                    className="w-full rounded-md border bg-input px-3 py-2"
-                  />
-                </div>
+            <form onSubmit={handleAddMedication} className="space-y-5 border-t pt-4">
+              <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                <Input
+                  label="Medication Name"
+                  placeholder="e.g., Aspirin"
+                  value={newMedName}
+                  onChange={(e) => setNewMedName(e.target.value)}
+                  variant="medication"
+                  required
+                />
+                <Input
+                  label="Dosage"
+                  placeholder="e.g., 10mg"
+                  value={newMedDosage}
+                  onChange={(e) => setNewMedDosage(e.target.value)}
+                  variant="medication"
+                />
               </div>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div>
-                  <label className="mb-2 block text-sm font-medium">Type</label>
-                  <div className="flex gap-4">
-                    <label className="flex items-center gap-2">
-                      <input
-                        type="radio"
-                        name="medType"
-                        checked={newMedIsChronic}
-                        onChange={() => setNewMedIsChronic(true)}
-                        className="h-4 w-4"
-                      />
-                      <span>Chronic</span>
-                    </label>
-                    <label className="flex items-center gap-2">
-                      <input
-                        type="radio"
-                        name="medType"
-                        checked={!newMedIsChronic}
-                        onChange={() => setNewMedIsChronic(false)}
-                        className="h-4 w-4"
-                      />
-                      <span>Temporary</span>
-                    </label>
-                  </div>
-                </div>
-                <div>
-                  <label htmlFor="medFrequency" className="mb-2 block text-sm font-medium">
-                    Frequency
-                  </label>
-                  <select
-                    id="medFrequency"
-                    value={newMedFrequency}
-                    onChange={(e) => setNewMedFrequency(e.target.value as 'ONCE' | 'TWICE' | 'THRICE')}
-                    className="w-full rounded-md border bg-input px-3 py-2"
-                  >
-                    <option value="ONCE">Once daily</option>
-                    <option value="TWICE">Twice daily</option>
-                    <option value="THRICE">Three times daily</option>
-                  </select>
-                </div>
+              <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                <RadioGroup label="Type">
+                  <Radio
+                    name="medType"
+                    label="Chronic"
+                    checked={newMedIsChronic}
+                    onChange={() => setNewMedIsChronic(true)}
+                    variant="medication"
+                  />
+                  <Radio
+                    name="medType"
+                    label="Temporary"
+                    checked={!newMedIsChronic}
+                    onChange={() => setNewMedIsChronic(false)}
+                    variant="medication"
+                  />
+                </RadioGroup>
+                <Select
+                  label="Frequency"
+                  value={newMedFrequency}
+                  onChange={(e) => setNewMedFrequency(e.target.value as 'ONCE' | 'TWICE' | 'THRICE')}
+                  variant="medication"
+                  options={[
+                    { value: 'ONCE', label: 'Once daily' },
+                    { value: 'TWICE', label: 'Twice daily' },
+                    { value: 'THRICE', label: 'Three times daily' },
+                  ]}
+                />
               </div>
               <button
                 type="submit"
                 disabled={isSaving}
-                className="rounded-md bg-medication px-4 py-2 font-medium text-white hover:opacity-90 disabled:opacity-50"
+                className="rounded-lg bg-medication px-5 py-2.5 font-medium text-white hover:opacity-90 disabled:opacity-50 transition-all duration-200 shadow-sm hover:shadow-md"
               >
                 {isSaving ? 'Saving...' : 'Save Medication'}
               </button>
@@ -519,11 +471,23 @@ export default function MedicationPage() {
         <div className="mb-8 rounded-lg border bg-card p-6 shadow-sm">
           <h2 className="mb-4 text-xl font-semibold">Today's Medications</h2>
           {isLoading ? (
-            <p className="text-center text-muted-foreground">Loading...</p>
+            <div className="flex items-center justify-center py-8">
+              <Spinner color="medication" size="lg" />
+            </div>
           ) : activeMedications.length === 0 ? (
-            <p className="text-center text-muted-foreground">
-              No medications added yet. Click "Add Medication" to get started.
-            </p>
+            <EmptyState
+              variant="medication"
+              title="Medication Made Simple"
+              description="Add your medications to get reminders and track your doses. Taking care of yourself has never been easier!"
+              action={
+                <button
+                  onClick={() => setIsAddingMed(true)}
+                  className="rounded-lg bg-medication px-4 py-2 font-medium text-white hover:opacity-90 transition-opacity"
+                >
+                  Add Medication
+                </button>
+              }
+            />
           ) : (
             <div className="space-y-4">
               {activeMedications.map((med) => (
@@ -558,24 +522,18 @@ export default function MedicationPage() {
                       </button>
                     </div>
                   </div>
-                  <div className="mt-3 flex gap-4">
+                  <div className="mt-3 flex gap-4 flex-wrap">
                     {getTimesOfDay(med.frequency).map((timeOfDay) => {
                       const taken = getLogStatus(med.id, timeOfDay)
                       return (
-                        <label
+                        <Checkbox
                           key={timeOfDay}
-                          className="flex items-center gap-2 cursor-pointer"
-                        >
-                          <input
-                            type="checkbox"
-                            checked={taken}
-                            onChange={() => handleToggleMedication(med.id, timeOfDay, taken)}
-                            className="h-5 w-5 rounded border-gray-300"
-                          />
-                          <span className={`capitalize ${taken ? 'line-through text-muted-foreground' : ''}`}>
-                            {timeOfDay}
-                          </span>
-                        </label>
+                          label={timeOfDay.charAt(0).toUpperCase() + timeOfDay.slice(1)}
+                          checked={taken}
+                          onChange={() => handleToggleMedication(med.id, timeOfDay, taken)}
+                          variant="medication"
+                          className={taken ? 'opacity-60' : ''}
+                        />
                       )
                     })}
                   </div>
@@ -658,7 +616,7 @@ export default function MedicationPage() {
         <div className="rounded-lg border bg-card p-6 shadow-sm">
           <h2 className="mb-4 text-xl font-semibold">All Medications</h2>
           {medications.length === 0 ? (
-            <p className="text-center text-muted-foreground">No medications found.</p>
+            <p className="text-center text-muted-foreground py-4">No medications found.</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
