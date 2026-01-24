@@ -104,6 +104,64 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /* Enhanced form input styling */
+  input[type="text"],
+  input[type="number"],
+  input[type="email"],
+  input[type="password"],
+  input[type="tel"],
+  input[type="url"],
+  input[type="search"],
+  textarea,
+  select {
+    @apply transition-all duration-200 ease-out;
+  }
+
+  input[type="text"]:focus,
+  input[type="number"]:focus,
+  input[type="email"]:focus,
+  input[type="password"]:focus,
+  input[type="tel"]:focus,
+  input[type="url"]:focus,
+  input[type="search"]:focus,
+  textarea:focus,
+  select:focus {
+    @apply outline-none ring-2 ring-primary/20 border-primary;
+  }
+
+  /* Custom checkbox styling */
+  input[type="checkbox"] {
+    @apply appearance-none w-5 h-5 rounded border-2 border-border bg-background cursor-pointer;
+    @apply transition-all duration-200 ease-out;
+    @apply checked:bg-primary checked:border-primary;
+    @apply hover:border-muted-foreground/50;
+    @apply focus:outline-none focus:ring-2 focus:ring-primary/20 focus:ring-offset-2;
+    background-image: none;
+  }
+
+  input[type="checkbox"]:checked {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3E%3C/svg%3E");
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  /* Custom radio button styling */
+  input[type="radio"] {
+    @apply appearance-none w-5 h-5 rounded-full border-2 border-border bg-background cursor-pointer;
+    @apply transition-all duration-200 ease-out;
+    @apply checked:border-primary;
+    @apply hover:border-muted-foreground/50;
+    @apply focus:outline-none focus:ring-2 focus:ring-primary/20 focus:ring-offset-2;
+  }
+
+  input[type="radio"]:checked {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' fill='%233b82f6' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='8' cy='8' r='4'/%3E%3C/svg%3E");
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
 }
 
 /* Custom utility classes */
@@ -111,6 +169,233 @@
   .touch-target {
     min-height: 44px;
     min-width: 44px;
+  }
+
+  /* ========================================
+     Page Transition Animations
+     ======================================== */
+
+  /* Fade in animation for page content */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeInScale {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  /* Slide in from left/right */
+  @keyframes slideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  /* Animation classes */
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
+  }
+
+  .animate-fade-in-up {
+    animation: fadeInUp 0.4s ease-out forwards;
+  }
+
+  .animate-fade-in-scale {
+    animation: fadeInScale 0.3s ease-out forwards;
+  }
+
+  .animate-slide-in-left {
+    animation: slideInLeft 0.3s ease-out forwards;
+  }
+
+  .animate-slide-in-right {
+    animation: slideInRight 0.3s ease-out forwards;
+  }
+
+  /* Staggered animation delays for lists and cards */
+  .stagger-1 { animation-delay: 0.05s; opacity: 0; }
+  .stagger-2 { animation-delay: 0.1s; opacity: 0; }
+  .stagger-3 { animation-delay: 0.15s; opacity: 0; }
+  .stagger-4 { animation-delay: 0.2s; opacity: 0; }
+  .stagger-5 { animation-delay: 0.25s; opacity: 0; }
+  .stagger-6 { animation-delay: 0.3s; opacity: 0; }
+  .stagger-7 { animation-delay: 0.35s; opacity: 0; }
+  .stagger-8 { animation-delay: 0.4s; opacity: 0; }
+
+  /* Respect users' reduced-motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-fade-in,
+    .animate-fade-in-up,
+    .animate-fade-in-scale,
+    .animate-slide-in-left,
+    .animate-slide-in-right,
+    .stagger-1, .stagger-2, .stagger-3, .stagger-4,
+    .stagger-5, .stagger-6, .stagger-7, .stagger-8 {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+      transition: none !important;
+    }
+
+    /* Also disable hover transitions */
+    .card-interactive,
+    .card-featured,
+    .btn-interactive,
+    .btn-primary,
+    .btn-secondary,
+    .btn-ghost,
+    .btn-icon,
+    .module-card {
+      transition: none !important;
+    }
+  }
+
+  /* Skeleton shimmer animation */
+  .skeleton-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .skeleton-shimmer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    animation: shimmer 2s infinite;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      hsl(var(--background) / 0.4) 20%,
+      hsl(var(--background) / 0.8) 50%,
+      hsl(var(--background) / 0.4) 80%,
+      transparent 100%
+    );
+  }
+
+  @keyframes shimmer {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  .dark .skeleton-shimmer::after {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      hsl(var(--foreground) / 0.05) 20%,
+      hsl(var(--foreground) / 0.1) 50%,
+      hsl(var(--foreground) / 0.05) 80%,
+      transparent 100%
+    );
+  }
+
+  /* Checkbox checkmark animation */
+  .checkbox-path {
+    stroke-dasharray: 24;
+    stroke-dashoffset: 24;
+    transition: stroke-dashoffset 0.2s ease-out;
+  }
+
+  input:checked ~ .checkbox-path,
+  .peer:checked ~ * .checkbox-path {
+    stroke-dashoffset: 0;
+  }
+
+  /* Form input enhancements */
+  .form-input-glow {
+    box-shadow: 0 0 0 3px hsl(var(--primary) / 0.1);
+  }
+
+  .form-input-glow-error {
+    box-shadow: 0 0 0 3px hsl(0 84% 60% / 0.1);
+  }
+
+  .form-input-glow-success {
+    box-shadow: 0 0 0 3px hsl(142 76% 36% / 0.1);
+  }
+
+  /* Tabular figures for numbers (ensures alignment) */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+  }
+
+  /* Typography enhancements */
+  .heading-display {
+    @apply font-bold tracking-tight;
+    letter-spacing: -0.025em;
+  }
+
+  .heading-section {
+    @apply font-semibold tracking-tight;
+    letter-spacing: -0.01em;
+  }
+
+  .label-caps {
+    @apply text-xs font-medium uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Text shadow for dark mode readability */
+  .text-shadow-sm {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+
+  .dark .text-shadow-sm {
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+
+  .text-shadow {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .dark .text-shadow {
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Stat number styling */
+  .stat-number {
+    @apply tabular-nums font-bold;
+    font-feature-settings: "tnum";
   }
 
   /* Mesh gradient background for visual interest */
@@ -250,10 +535,177 @@
 
   .btn-interactive:hover {
     transform: scale(1.02);
+    filter: brightness(1.05);
   }
 
   .btn-interactive:active {
     transform: scale(0.98);
+    filter: brightness(0.95);
+  }
+
+  /* Primary button with gradient */
+  .btn-primary {
+    @apply relative overflow-hidden rounded-lg px-4 py-2 font-medium text-primary-foreground;
+    @apply transition-all duration-200 ease-out;
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.85) 100%);
+    box-shadow: 0 2px 4px hsl(var(--primary) / 0.2), 0 4px 8px hsl(var(--primary) / 0.1);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-1px) scale(1.01);
+    box-shadow: 0 4px 8px hsl(var(--primary) / 0.25), 0 8px 16px hsl(var(--primary) / 0.15);
+    filter: brightness(1.08) saturate(1.1);
+  }
+
+  .btn-primary:active {
+    transform: translateY(0) scale(0.99);
+    filter: brightness(0.95);
+  }
+
+  .btn-primary:focus-visible {
+    @apply outline-none;
+    box-shadow: 0 0 0 3px hsl(var(--background)), 0 0 0 5px hsl(var(--primary) / 0.5);
+  }
+
+  .btn-primary:disabled {
+    @apply cursor-not-allowed;
+    background: hsl(var(--muted));
+    color: hsl(var(--muted-foreground));
+    box-shadow: none;
+    filter: none;
+    transform: none;
+  }
+
+  /* Secondary button */
+  .btn-secondary {
+    @apply relative rounded-lg px-4 py-2 font-medium;
+    @apply transition-all duration-200 ease-out;
+    @apply bg-secondary text-secondary-foreground;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
+  }
+
+  .btn-secondary:hover {
+    @apply bg-secondary/80;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgb(0 0 0 / 0.1);
+  }
+
+  .btn-secondary:active {
+    transform: translateY(0) scale(0.99);
+  }
+
+  .btn-secondary:focus-visible {
+    @apply outline-none;
+    box-shadow: 0 0 0 3px hsl(var(--background)), 0 0 0 5px hsl(var(--primary) / 0.3);
+  }
+
+  .btn-secondary:disabled {
+    @apply cursor-not-allowed opacity-50;
+    transform: none;
+  }
+
+  /* Ghost button */
+  .btn-ghost {
+    @apply rounded-lg px-4 py-2 font-medium;
+    @apply transition-all duration-200 ease-out;
+    @apply text-foreground;
+    background: transparent;
+  }
+
+  .btn-ghost:hover {
+    @apply bg-accent;
+  }
+
+  .btn-ghost:active {
+    @apply bg-accent/80;
+    transform: scale(0.98);
+  }
+
+  .btn-ghost:focus-visible {
+    @apply outline-none;
+    box-shadow: 0 0 0 2px hsl(var(--primary) / 0.3);
+  }
+
+  /* Icon button */
+  .btn-icon {
+    @apply flex items-center justify-center rounded-lg p-2;
+    @apply transition-all duration-150 ease-out;
+    min-width: 40px;
+    min-height: 40px;
+  }
+
+  .btn-icon:hover {
+    @apply bg-accent;
+    transform: scale(1.05);
+  }
+
+  .btn-icon:active {
+    transform: scale(0.95);
+  }
+
+  .btn-icon:focus-visible {
+    @apply outline-none;
+    box-shadow: 0 0 0 2px hsl(var(--primary) / 0.3);
+  }
+
+  /* Module-colored buttons (pushups, etc.) */
+  .btn-pushups {
+    @apply relative overflow-hidden rounded-lg px-4 py-2 font-medium text-pushups-foreground;
+    @apply transition-all duration-200 ease-out;
+    background: linear-gradient(135deg, hsl(var(--pushups)) 0%, hsl(var(--pushups) / 0.85) 100%);
+    box-shadow: 0 2px 4px hsl(var(--pushups) / 0.2);
+  }
+
+  .btn-pushups:hover {
+    transform: translateY(-1px) scale(1.01);
+    filter: brightness(1.08) saturate(1.1);
+    box-shadow: 0 4px 8px hsl(var(--pushups) / 0.25);
+  }
+
+  .btn-pushups:active {
+    transform: translateY(0) scale(0.99);
+    filter: brightness(0.95);
+  }
+
+  .btn-pushups:focus-visible {
+    @apply outline-none;
+    box-shadow: 0 0 0 3px hsl(var(--background)), 0 0 0 5px hsl(var(--pushups) / 0.5);
+  }
+
+  .btn-medication {
+    @apply relative overflow-hidden rounded-lg px-4 py-2 font-medium text-medication-foreground;
+    @apply transition-all duration-200 ease-out;
+    background: linear-gradient(135deg, hsl(var(--medication)) 0%, hsl(var(--medication) / 0.85) 100%);
+    box-shadow: 0 2px 4px hsl(var(--medication) / 0.2);
+  }
+
+  .btn-medication:hover {
+    transform: translateY(-1px) scale(1.01);
+    filter: brightness(1.08) saturate(1.1);
+    box-shadow: 0 4px 8px hsl(var(--medication) / 0.25);
+  }
+
+  .btn-medication:active {
+    transform: translateY(0) scale(0.99);
+    filter: brightness(0.95);
+  }
+
+  .btn-dogs {
+    @apply relative overflow-hidden rounded-lg px-4 py-2 font-medium text-dogs-foreground;
+    @apply transition-all duration-200 ease-out;
+    background: linear-gradient(135deg, hsl(var(--dogs)) 0%, hsl(var(--dogs) / 0.85) 100%);
+    box-shadow: 0 2px 4px hsl(var(--dogs) / 0.2);
+  }
+
+  .btn-dogs:hover {
+    transform: translateY(-1px) scale(1.01);
+    filter: brightness(1.08) saturate(1.1);
+    box-shadow: 0 4px 8px hsl(var(--dogs) / 0.25);
+  }
+
+  .btn-dogs:active {
+    transform: translateY(0) scale(0.99);
+    filter: brightness(0.95);
   }
 
   /* Module card accent styles */

@@ -263,7 +263,7 @@ export default function BodyPage() {
     <main className="flex min-h-screen flex-col p-4 md:p-8">
       <div className="mx-auto w-full max-w-4xl">
         {/* Header */}
-        <header className="mb-8">
+        <header className="mb-8 animate-fade-in-up">
           <Link href="/" className="text-sm text-muted-foreground hover:text-foreground mb-2 inline-block">
             &larr; Back to Home
           </Link>
@@ -272,7 +272,7 @@ export default function BodyPage() {
         </header>
 
         {/* Today's Metrics Input */}
-        <div className="mb-8 rounded-lg border bg-card p-6 shadow-sm">
+        <div className="mb-8 rounded-lg border bg-card p-6 shadow-sm animate-fade-in-up stagger-1">
           <h2 className="mb-4 text-xl font-semibold">Today's Metrics</h2>
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="grid grid-cols-1 gap-5 md:grid-cols-3">

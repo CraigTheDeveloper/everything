@@ -298,7 +298,7 @@ export default function Home() {
     <main className="flex min-h-screen flex-col p-4 md:p-8 pb-24 md:pb-8">
       <div className="mx-auto w-full max-w-6xl">
         {/* Hero Section - Daily Summary */}
-        <section className="mb-8 relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-6 md:p-8 border border-primary/10">
+        <section className="mb-8 relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-6 md:p-8 border border-primary/10 animate-fade-in-up">
           <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
           <div className="relative z-10">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -351,7 +351,7 @@ export default function Home() {
         {/* Module Progress - Bento Box Layout */}
         <div className="mb-8 grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
           {/* Pushups - Featured (larger) */}
-          <a href="/pushups" className="col-span-2 md:row-span-2 module-card module-card-pushups cursor-pointer p-5 flex flex-col justify-between group hover:scale-[1.02] transition-transform">
+          <a href="/pushups" className="col-span-2 md:row-span-2 module-card module-card-pushups cursor-pointer p-5 flex flex-col justify-between group hover:scale-[1.02] transition-transform animate-fade-in-up stagger-1">
             <div className="flex items-start justify-between">
               <div>
                 <h3 className="text-lg font-semibold">Pushups</h3>
@@ -374,7 +374,7 @@ export default function Home() {
           </a>
 
           {/* Oral Hygiene */}
-          <a href="/oral" className="module-card module-card-oral cursor-pointer p-4 flex flex-col group hover:scale-[1.02] transition-transform">
+          <a href="/oral" className="module-card module-card-oral cursor-pointer p-4 flex flex-col group hover:scale-[1.02] transition-transform animate-fade-in-up stagger-2">
             <div className="flex items-center justify-between mb-2">
               <h3 className="font-semibold">Oral</h3>
               <ProgressRing
@@ -390,7 +390,7 @@ export default function Home() {
           </a>
 
           {/* Meds */}
-          <a href="/medication" className="module-card module-card-medication cursor-pointer p-4 flex flex-col group hover:scale-[1.02] transition-transform">
+          <a href="/medication" className="module-card module-card-medication cursor-pointer p-4 flex flex-col group hover:scale-[1.02] transition-transform animate-fade-in-up stagger-3">
             <div className="flex items-center justify-between mb-2">
               <h3 className="font-semibold">Meds</h3>
               <ProgressRing
@@ -410,7 +410,7 @@ export default function Home() {
           </a>
 
           {/* Body */}
-          <a href="/body" className="module-card module-card-body cursor-pointer p-4 flex flex-col group hover:scale-[1.02] transition-transform">
+          <a href="/body" className="module-card module-card-body cursor-pointer p-4 flex flex-col group hover:scale-[1.02] transition-transform animate-fade-in-up stagger-4">
             <div className="flex items-center justify-between mb-2">
               <h3 className="font-semibold">Body</h3>
               <ProgressRing
@@ -426,7 +426,7 @@ export default function Home() {
           </a>
 
           {/* Time */}
-          <a href="/time" className="module-card module-card-time cursor-pointer p-4 flex flex-col group hover:scale-[1.02] transition-transform">
+          <a href="/time" className="module-card module-card-time cursor-pointer p-4 flex flex-col group hover:scale-[1.02] transition-transform animate-fade-in-up stagger-5">
             <div className="flex items-center justify-between mb-2">
               <h3 className="font-semibold">Time</h3>
               <ProgressRing
@@ -442,7 +442,7 @@ export default function Home() {
           </a>
 
           {/* Dogs */}
-          <a href="/dogs" className="module-card module-card-dogs cursor-pointer p-4 flex flex-col group hover:scale-[1.02] transition-transform">
+          <a href="/dogs" className="module-card module-card-dogs cursor-pointer p-4 flex flex-col group hover:scale-[1.02] transition-transform animate-fade-in-up stagger-6">
             <div className="flex items-center justify-between mb-2">
               <h3 className="font-semibold">Dogs</h3>
               <ProgressRing
@@ -468,7 +468,7 @@ export default function Home() {
         {/* Quick Actions Section - Asymmetric Grid */}
         <div className="mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {/* Pushups Quick Actions - Featured */}
-          <div className="md:col-span-2 lg:col-span-1 card-interactive p-5 border-2 border-pushups/20 bg-gradient-to-br from-pushups/5 to-transparent">
+          <div className="md:col-span-2 lg:col-span-1 card-interactive p-5 border-2 border-pushups/20 bg-gradient-to-br from-pushups/5 to-transparent animate-fade-in-up stagger-1">
             <div className="flex items-center gap-2 mb-4">
               <span className="text-xl">💪</span>
               <h3 className="font-semibold">Log Pushups</h3>
@@ -517,7 +517,7 @@ export default function Home() {
           </div>
 
           {/* Oral Hygiene Quick Actions */}
-          <div className="card-interactive p-5 border-2 border-oral/20 bg-gradient-to-br from-oral/5 to-transparent">
+          <div className="card-interactive p-5 border-2 border-oral/20 bg-gradient-to-br from-oral/5 to-transparent animate-fade-in-up stagger-2">
             <div className="flex items-center gap-2 mb-4">
               <span className="text-xl">🦷</span>
               <h3 className="font-semibold">Oral Hygiene</h3>
@@ -555,7 +555,7 @@ export default function Home() {
 
           {/* Medication Quick Actions */}
           {medications.length > 0 && (
-            <div className="card-interactive p-5 border-2 border-medication/20 bg-gradient-to-br from-medication/5 to-transparent">
+            <div className="card-interactive p-5 border-2 border-medication/20 bg-gradient-to-br from-medication/5 to-transparent animate-fade-in-up stagger-3">
               <div className="flex items-center gap-2 mb-4">
                 <span className="text-xl">💊</span>
                 <h3 className="font-semibold">Medications</h3>
@@ -591,7 +591,7 @@ export default function Home() {
         </div>
 
         {/* Streaks Section */}
-        <div className="mb-6">
+        <div className="mb-6 animate-fade-in-up stagger-4">
           <h2 className="mb-4 text-xl heading-section">Active Streaks</h2>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="card-interactive flex items-center gap-3 p-4">

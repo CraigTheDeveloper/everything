@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { format } from 'date-fns'
 import { useToast } from '@/components/ui/use-toast'
 import Link from 'next/link'
+import { AnimatedProgressBar, AnimatedCounter } from '@/components/ui/progress-ring'
 
 interface PushupStats {
   goal: {
@@ -120,25 +121,25 @@ export default function PushupsPage() {
     <main className="flex min-h-screen flex-col p-4 md:p-8">
       <div className="mx-auto w-full max-w-4xl">
         {/* Header */}
-        <header className="mb-8">
+        <header className="mb-8 animate-fade-in-up">
           <Link href="/" className="text-sm text-muted-foreground hover:text-foreground mb-2 inline-block">
             &larr; Back to Home
           </Link>
-          <h1 className="text-3xl font-bold text-foreground">Pushup Tracking</h1>
+          <h1 className="text-3xl heading-display text-foreground">Pushup Tracking</h1>
           <p className="text-lg text-muted-foreground">{formattedDate}</p>
         </header>
 
         {/* Yearly Goal Progress */}
-        <div className="mb-8 rounded-lg border bg-card p-6 shadow-sm">
-          <h2 className="mb-4 text-xl font-semibold">Yearly Goal Progress</h2>
+        <div className="mb-8 rounded-lg border bg-card p-6 shadow-sm animate-fade-in-up stagger-1">
+          <h2 className="mb-4 text-xl heading-section">Yearly Goal Progress</h2>
           {isLoading ? (
             <p className="text-center text-muted-foreground">Loading...</p>
           ) : stats ? (
             <div className="space-y-4">
               {/* Main Progress Display */}
               <div className="text-center">
-                <p className="text-5xl font-bold text-pushups">
-                  {stats.progress.yearlyTotal.toLocaleString()}
+                <p className="text-5xl stat-number text-pushups">
+                  <AnimatedCounter value={stats.progress.yearlyTotal} duration={1000} />
                 </p>
                 <p className="text-lg text-muted-foreground">
                   / {stats.goal.yearlyTarget.toLocaleString()} pushups
@@ -146,39 +147,49 @@ export default function PushupsPage() {
               </div>
 
               {/* Progress Bar */}
-              <div className="h-4 w-full overflow-hidden rounded-full bg-muted">
-                <div
-                  className="h-full bg-pushups transition-all duration-500"
-                  style={{ width: `${Math.min(stats.progress.progressPercentage, 100)}%` }}
-                />
-              </div>
+              <AnimatedProgressBar
+                progress={Math.min(stats.progress.progressPercentage, 100)}
+                height={16}
+                gradientFrom="hsl(var(--pushups))"
+                gradientTo="hsl(30 90% 55%)"
+                showGlowOnComplete={true}
+                className="rounded-full"
+              />
               <p className="text-center text-sm text-muted-foreground">
-                {stats.progress.progressPercentage.toFixed(1)}% complete
+                <AnimatedCounter value={Math.round(stats.progress.progressPercentage * 10) / 10} duration={800} suffix="%" /> complete
               </p>
 
               {/* Stats Grid */}
               <div className="grid grid-cols-2 gap-4 pt-4 md:grid-cols-4">
                 <div className="rounded-lg bg-muted p-4 text-center">
-                  <p className="text-2xl font-bold">{stats.progress.todayTotal}</p>
+                  <p className="text-2xl font-bold">
+                    <AnimatedCounter value={stats.progress.todayTotal} duration={600} />
+                  </p>
                   <p className="text-xs text-muted-foreground">Today</p>
                 </div>
                 <div className="rounded-lg bg-muted p-4 text-center">
-                  <p className="text-2xl font-bold">{stats.progress.remaining.toLocaleString()}</p>
+                  <p className="text-2xl font-bold">
+                    <AnimatedCounter value={stats.progress.remaining} duration={800} />
+                  </p>
                   <p className="text-xs text-muted-foreground">Remaining</p>
                 </div>
                 <div className="rounded-lg bg-muted p-4 text-center">
-                  <p className="text-2xl font-bold">{stats.progress.requiredDailyPace}</p>
+                  <p className="text-2xl font-bold">
+                    <AnimatedCounter value={stats.progress.requiredDailyPace} duration={600} />
+                  </p>
                   <p className="text-xs text-muted-foreground">Daily Pace Needed</p>
                 </div>
                 <div className="rounded-lg bg-muted p-4 text-center">
-                  <p className="text-2xl font-bold">{stats.progress.daysRemaining}</p>
+                  <p className="text-2xl font-bold">
+                    <AnimatedCounter value={stats.progress.daysRemaining} duration={600} />
+                  </p>
                   <p className="text-xs text-muted-foreground">Days Left</p>
                 </div>
               </div>
 
               {/* On Track Indicator */}
-              <div className={`rounded-lg p-3 text-center ${
-                stats.progress.isOnTrack ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+              <div className={`rounded-lg p-3 text-center transition-all duration-500 ${
+                stats.progress.isOnTrack ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'
               }`}>
                 <p className="font-medium">
                   {stats.progress.isOnTrack
@@ -193,27 +204,27 @@ export default function PushupsPage() {
         </div>
 
         {/* Log Pushups Section */}
-        <div className="mb-8 rounded-lg border bg-card p-6 shadow-sm">
-          <h2 className="mb-4 text-xl font-semibold">Log Pushups</h2>
+        <div className="mb-8 rounded-lg border bg-card p-6 shadow-sm animate-fade-in-up stagger-2">
+          <h2 className="mb-4 text-xl heading-section">Log Pushups</h2>
           <div className="flex flex-wrap gap-3">
             <button
               onClick={() => logPushups(10)}
               disabled={isSaving}
-              className="touch-target rounded-md bg-pushups px-6 py-3 text-lg font-medium text-pushups-foreground hover:opacity-90 disabled:opacity-50"
+              className="touch-target btn-interactive rounded-md bg-pushups px-6 py-3 text-lg font-medium text-pushups-foreground shadow-soft hover:shadow-elevated disabled:opacity-50 transition-all duration-200"
             >
               +10
             </button>
             <button
               onClick={() => logPushups(15)}
               disabled={isSaving}
-              className="touch-target rounded-md bg-pushups px-6 py-3 text-lg font-medium text-pushups-foreground hover:opacity-90 disabled:opacity-50"
+              className="touch-target btn-interactive rounded-md bg-pushups px-6 py-3 text-lg font-medium text-pushups-foreground shadow-soft hover:shadow-elevated disabled:opacity-50 transition-all duration-200"
             >
               +15
             </button>
             <button
               onClick={() => logPushups(20)}
               disabled={isSaving}
-              className="touch-target rounded-md bg-pushups px-6 py-3 text-lg font-medium text-pushups-foreground hover:opacity-90 disabled:opacity-50"
+              className="touch-target btn-interactive rounded-md bg-pushups px-6 py-3 text-lg font-medium text-pushups-foreground shadow-soft hover:shadow-elevated disabled:opacity-50 transition-all duration-200"
             >
               +20
             </button>
@@ -230,7 +241,7 @@ export default function PushupsPage() {
               <button
                 onClick={handleCustomSubmit}
                 disabled={isSaving || !customPushups}
-                className="touch-target rounded-md bg-primary px-4 py-3 font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50"
+                className="touch-target btn-interactive rounded-md bg-primary px-4 py-3 font-medium text-primary-foreground shadow-soft hover:shadow-elevated disabled:opacity-50 transition-all duration-200"
               >
                 Add
               </button>
@@ -240,7 +251,7 @@ export default function PushupsPage() {
 
         {/* Today's Logs */}
         <div className="rounded-lg border bg-card p-6 shadow-sm">
-          <h2 className="mb-4 text-xl font-semibold">Today's Entries</h2>
+          <h2 className="mb-4 text-xl heading-section">Today's Entries</h2>
           {todayLogs.length === 0 ? (
             <p className="text-center text-muted-foreground">
               No pushups logged today. Get started above!
@@ -250,7 +261,7 @@ export default function PushupsPage() {
               {todayLogs.map((log) => (
                 <div
                   key={log.id}
-                  className="flex items-center justify-between rounded-lg bg-muted px-4 py-3"
+                  className="flex items-center justify-between rounded-lg bg-muted px-4 py-3 transition-all duration-200 hover:bg-muted/80"
                 >
                   <span className="font-medium">{log.count} pushups</span>
                   <span className="text-sm text-muted-foreground">

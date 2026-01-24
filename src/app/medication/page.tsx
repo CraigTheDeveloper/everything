@@ -320,7 +320,7 @@ export default function MedicationPage() {
     <main className="flex min-h-screen flex-col p-4 md:p-8">
       <div className="mx-auto w-full max-w-4xl">
         {/* Header */}
-        <header className="mb-8">
+        <header className="mb-8 animate-fade-in-up">
           <Link href="/" className="text-sm text-muted-foreground hover:text-foreground mb-2 inline-block">
             &larr; Back to Home
           </Link>
@@ -329,7 +329,7 @@ export default function MedicationPage() {
         </header>
 
         {/* Add Medication Section */}
-        <div className="mb-8 rounded-lg border bg-card p-6 shadow-sm">
+        <div className="mb-8 rounded-lg border bg-card p-6 shadow-sm animate-fade-in-up stagger-1">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold">Medications</h2>
             <button
