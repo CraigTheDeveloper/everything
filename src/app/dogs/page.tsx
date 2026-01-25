@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { format } from 'date-fns'
 import { useToast } from '@/components/ui/use-toast'
 import Link from 'next/link'
+import { Spinner, EmptyState, CardSkeleton, ListItemSkeleton } from '@/components/ui/loading-states'
 
 interface Dog {
   id: number
@@ -451,11 +452,23 @@ export default function DogsPage() {
 
           {/* Dogs List */}
           {isLoading ? (
-            <p className="text-center text-muted-foreground">Loading...</p>
+            <div className="flex items-center justify-center py-8">
+              <Spinner color="dogs" size="lg" />
+            </div>
           ) : activeDogs.length === 0 ? (
-            <p className="text-center text-muted-foreground">
-              No dogs added yet. Click "Add Dog" to get started.
-            </p>
+            <EmptyState
+              variant="dogs"
+              title="Who Let the Dogs Out?"
+              description="Add your furry friends to start tracking their walks. Happy pups, happy life!"
+              action={
+                <button
+                  onClick={() => setIsAddingDog(true)}
+                  className="rounded-lg bg-dogs px-4 py-2 font-medium text-white hover:opacity-90 transition-opacity"
+                >
+                  Add Your First Dog
+                </button>
+              }
+            />
           ) : (
             <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
               {activeDogs.map((dog) => (
@@ -688,9 +701,11 @@ export default function DogsPage() {
         <div className="rounded-lg border bg-card p-6 shadow-sm">
           <h2 className="mb-4 text-xl font-semibold">Recent Walks</h2>
           {walks.length === 0 ? (
-            <p className="text-center text-muted-foreground">
-              No walks logged yet. Add dogs and start logging walks!
-            </p>
+            <EmptyState
+              variant="dogs"
+              title="Time for Walkies!"
+              description="No walks logged yet. Add your dogs first, then start logging those tail-wagging adventures!"
+            />
           ) : (
             <div className="space-y-3">
               {walks.map((walk) => (

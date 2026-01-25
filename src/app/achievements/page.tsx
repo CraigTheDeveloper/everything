@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { format } from 'date-fns'
+import { Spinner, EmptyState } from '@/components/ui/loading-states'
 
 interface Achievement {
   id: number
@@ -241,12 +242,19 @@ export default function AchievementsPage() {
 
         {/* Empty State */}
         {!isLoading && filteredAchievements.length === 0 && (
-          <div className="flex h-48 items-center justify-center rounded-lg border bg-card">
-            <p className="text-muted-foreground">
-              {filter === 'unlocked'
-                ? 'No achievements unlocked yet. Keep tracking!'
-                : 'No locked achievements remaining. Congratulations!'}
-            </p>
+          <div className="rounded-lg border bg-card">
+            {filter === 'unlocked' ? (
+              <EmptyState
+                title="Achievements Await!"
+                description="Keep tracking your habits to unlock badges and earn XP. Your first achievement is just around the corner!"
+              />
+            ) : (
+              <EmptyState
+                title="You're a Champion!"
+                description="Incredible! You've unlocked all available achievements. You're an absolute legend!"
+                icon={<span className="text-4xl">🏆</span>}
+              />
+            )}
           </div>
         )}
       </div>
