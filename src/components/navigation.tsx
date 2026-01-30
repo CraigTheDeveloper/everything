@@ -62,7 +62,18 @@ function MedsIcon({ className }: { className?: string }) {
 
 function PushupsIcon({ className }: { className?: string }) {
   return (
-    <span className={className} style={{ fontSize: '20px', lineHeight: 1 }}>💪</span>
+    <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      {/* Left weight plates (3 progressive sizes) */}
+      <rect x="1.5" y="9" width="2" height="6" rx="0.5"/>
+      <rect x="3.5" y="8.5" width="2" height="7" rx="0.5"/>
+      <rect x="5.5" y="8" width="2" height="8" rx="0.5"/>
+      {/* Bar/handle */}
+      <line x1="7.5" y1="12" x2="16.5" y2="12"/>
+      {/* Right weight plates (3 progressive sizes) */}
+      <rect x="16.5" y="8" width="2" height="8" rx="0.5"/>
+      <rect x="18.5" y="8.5" width="2" height="7" rx="0.5"/>
+      <rect x="20.5" y="9" width="2" height="6" rx="0.5"/>
+    </svg>
   )
 }
 
