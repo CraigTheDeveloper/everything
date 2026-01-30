@@ -472,7 +472,7 @@ export default function DogsPage() {
           ) : (
             <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
               {activeDogs.map((dog) => (
-                <div key={dog.id} className="rounded-lg border p-4 text-center">
+                <div key={dog.id} className="rounded-lg border p-4 text-center overflow-hidden">
                   <div className="mb-2 mx-auto h-20 w-20 rounded-full bg-muted flex items-center justify-center overflow-hidden">
                     {dog.photoPath ? (
                       <img
@@ -484,7 +484,7 @@ export default function DogsPage() {
                       <span className="text-3xl">🐕</span>
                     )}
                   </div>
-                  <h3 className="font-medium">{dog.name}</h3>
+                  <h3 className="font-medium truncate" title={dog.name}>{dog.name}</h3>
                   <div className="mt-2 flex justify-center gap-2">
                     <button
                       onClick={() => handleEditDog(dog)}
@@ -675,20 +675,20 @@ export default function DogsPage() {
                 <h3 className="mb-3 text-sm font-medium">Walks Per Dog</h3>
                 <div className="space-y-2">
                   {stats.walksPerDog.map((dog) => (
-                    <div key={dog.id} className="flex items-center justify-between border-b pb-2 last:border-0">
-                      <div className="flex items-center gap-2">
+                    <div key={dog.id} className="flex items-center justify-between gap-2 border-b pb-2 last:border-0">
+                      <div className="flex items-center gap-2 min-w-0 flex-1">
                         {dog.photoPath ? (
                           <img
                             src={dog.photoPath}
                             alt={dog.name}
-                            className="h-8 w-8 rounded-full object-cover"
+                            className="h-8 w-8 rounded-full object-cover flex-shrink-0"
                           />
                         ) : (
-                          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">🐕</span>
+                          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-muted flex-shrink-0">🐕</span>
                         )}
-                        <span className="font-medium">{dog.name}</span>
+                        <span className="font-medium truncate" title={dog.name}>{dog.name}</span>
                       </div>
-                      <span className="text-muted-foreground">{dog.walkCount} walks</span>
+                      <span className="text-muted-foreground flex-shrink-0">{dog.walkCount} walks</span>
                     </div>
                   ))}
                 </div>
@@ -709,25 +709,25 @@ export default function DogsPage() {
           ) : (
             <div className="space-y-3">
               {walks.map((walk) => (
-                <div key={walk.id} className="rounded-lg border p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
+                <div key={walk.id} className="rounded-lg border p-4 overflow-hidden">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2 min-w-0 flex-1 flex-wrap">
                       {walk.dogs.map(({ dog }) => (
-                        <div key={dog.id} className="flex items-center gap-1">
+                        <div key={dog.id} className="flex items-center gap-1 min-w-0 max-w-[120px]">
                           {dog.photoPath ? (
                             <img
                               src={dog.photoPath}
                               alt={dog.name}
-                              className="h-6 w-6 rounded-full object-cover"
+                              className="h-6 w-6 rounded-full object-cover flex-shrink-0"
                             />
                           ) : (
-                            <span>🐕</span>
+                            <span className="flex-shrink-0">🐕</span>
                           )}
-                          <span className="text-sm font-medium">{dog.name}</span>
+                          <span className="text-sm font-medium truncate" title={dog.name}>{dog.name}</span>
                         </div>
                       ))}
                     </div>
-                    <span className="text-sm text-muted-foreground">
+                    <span className="text-sm text-muted-foreground flex-shrink-0">
                       {format(new Date(walk.date), 'MMM d, yyyy')}
                     </span>
                   </div>
