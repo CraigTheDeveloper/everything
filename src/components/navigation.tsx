@@ -238,7 +238,9 @@ export function Navigation({ children }: { children: React.ReactNode }) {
           <div className="border-t p-4 bg-muted/30">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm text-muted-foreground">Theme</span>
-              <ThemeToggle />
+              <div className="bg-muted rounded-lg">
+                <ThemeToggle />
+              </div>
             </div>
             <p className="text-xs text-muted-foreground text-center">Personal Habit Tracker</p>
           </div>
