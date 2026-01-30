@@ -62,15 +62,7 @@ function MedsIcon({ className }: { className?: string }) {
 
 function PushupsIcon({ className }: { className?: string }) {
   return (
-    <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M6.5 6.5a2 2 0 1 0 0 4" />
-      <path d="M17.5 6.5a2 2 0 1 1 0 4" />
-      <path d="M6.5 17.5a2 2 0 1 0 0-4" />
-      <path d="M17.5 17.5a2 2 0 1 1 0-4" />
-      <path d="M6.5 8.5h-2v7h2" />
-      <path d="M17.5 8.5h2v7h-2" />
-      <path d="M6.5 12h11" />
-    </svg>
+    <span className={className} style={{ fontSize: '20px', lineHeight: 1 }}>💪</span>
   )
 }
 
@@ -89,11 +81,7 @@ function DogsIcon({ className }: { className?: string }) {
 
 function OralIcon({ className }: { className?: string }) {
   return (
-    <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 2c-1.7 0-3 1.5-3 3.5 0 1.5.5 2.5 1.5 4l1.5 3 1.5-3c1-1.5 1.5-2.5 1.5-4 0-2-1.3-3.5-3-3.5z" />
-      <path d="M9 12.5v6c0 2 1.3 3.5 3 3.5s3-1.5 3-3.5v-6" />
-      <path d="M9 15h6" />
-    </svg>
+    <span className={className} style={{ fontSize: '20px', lineHeight: 1 }}>🦷</span>
   )
 }
 
