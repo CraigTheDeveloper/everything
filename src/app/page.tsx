@@ -36,7 +36,8 @@ interface MedicationStatus {
 interface LevelData {
   currentXP: number
   currentLevel: number
-  xpForNextLevel: number
+  xpForCurrentLevel: number
+  xpToNextLevel: number
   levelTitle: string
 }
 
@@ -54,7 +55,7 @@ export default function Home() {
   const [recentAchievements, setRecentAchievements] = useState<Achievement[]>([])
   const [medications, setMedications] = useState<MedicationStatus[]>([])
   const [medicationCount, setMedicationCount] = useState({ complete: 0, total: 0, takenSlots: 0, totalSlots: 0 })
-  const [levelData, setLevelData] = useState<LevelData>({ currentXP: 0, currentLevel: 1, xpForNextLevel: 100, levelTitle: 'Novice' })
+  const [levelData, setLevelData] = useState<LevelData>({ currentXP: 0, currentLevel: 1, xpForCurrentLevel: 0, xpToNextLevel: 100, levelTitle: 'Novice' })
   const [dailyPoints, setDailyPoints] = useState(0)
   const { toast } = useToast()
 
@@ -119,8 +120,9 @@ export default function Home() {
         setLevelData({
           currentXP: data.currentXP || 0,
           currentLevel: data.currentLevel || 1,
-          xpForNextLevel: data.xpForNextLevel || 100,
-          levelTitle: data.levelTitle || 'Novice'
+          xpForCurrentLevel: data.xpForCurrentLevel || 0,
+          xpToNextLevel: data.xpToNextLevel || 100,
+          levelTitle: data.title || 'Novice'
         })
       }
 
@@ -290,8 +292,8 @@ export default function Home() {
   const medsProgress = medicationCount.totalSlots > 0
     ? Math.round((medicationCount.takenSlots / medicationCount.totalSlots) * 100)
     : 0
-  const xpProgress = levelData.xpForNextLevel > 0
-    ? Math.round((levelData.currentXP / levelData.xpForNextLevel) * 100)
+  const xpProgress = (levelData.xpForCurrentLevel + levelData.xpToNextLevel) > 0
+    ? Math.round((levelData.xpForCurrentLevel / (levelData.xpForCurrentLevel + levelData.xpToNextLevel)) * 100)
     : 0
 
   return (
@@ -653,9 +655,14 @@ export default function Home() {
                 <p className="text-2xl stat-number">Level <AnimatedCounter value={levelData.currentLevel} duration={600} /></p>
                 <p className="text-sm text-muted-foreground">{levelData.levelTitle}</p>
               </div>
-              <p className="text-sm text-muted-foreground">
-                <AnimatedCounter value={levelData.currentXP} duration={600} /> / {levelData.xpForNextLevel} XP
-              </p>
+              <div className="text-right">
+                <p className="text-sm text-muted-foreground">
+                  {levelData.currentXP} XP total
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  {levelData.xpToNextLevel} XP to next level
+                </p>
+              </div>
             </div>
             <AnimatedProgressBar
               progress={xpProgress}
