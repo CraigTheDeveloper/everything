@@ -376,7 +376,7 @@ export default function Home() {
           {/* Oral Hygiene */}
           <a href="/oral" className="module-card module-card-oral cursor-pointer p-4 flex flex-col group hover:scale-[1.02] transition-transform animate-fade-in-up stagger-2">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="font-semibold">Oral</h3>
+              <h3 className="font-semibold">Teeth</h3>
               <ProgressRing
                 progress={oralProgress}
                 size={40}
