@@ -210,7 +210,7 @@ Checkbox.displayName = 'Checkbox'
 // TOGGLE SWITCH
 // ============================================================================
 
-interface ToggleProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type'> {
+interface ToggleProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type' | 'size'> {
   label?: string
   description?: string
   variant?: 'default' | 'body' | 'time' | 'medication' | 'pushups' | 'dogs' | 'oral'

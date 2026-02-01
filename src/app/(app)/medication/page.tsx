@@ -481,7 +481,7 @@ export default function MedicationPage() {
               description="Add your medications to get reminders and track your doses. Taking care of yourself has never been easier!"
               action={
                 <button
-                  onClick={() => setIsAddingMed(true)}
+                  onClick={() => setIsAddingMedication(true)}
                   className="rounded-lg bg-medication px-4 py-2 font-medium text-white hover:opacity-90 transition-opacity"
                 >
                   Add Medication
