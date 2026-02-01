@@ -104,10 +104,10 @@ const config: Config = {
         '5xl': ['3rem', { lineHeight: '1.15' }],
         '6xl': ['3.75rem', { lineHeight: '1.1' }],
         // Display sizes for stats and numbers
-        'stat-sm': ['1.5rem', { lineHeight: '1.2', fontFeatureSettings: '"tnum"' }],
-        'stat': ['2rem', { lineHeight: '1.2', fontFeatureSettings: '"tnum"' }],
-        'stat-lg': ['2.5rem', { lineHeight: '1.1', fontFeatureSettings: '"tnum"' }],
-        'stat-xl': ['3.5rem', { lineHeight: '1.05', fontFeatureSettings: '"tnum"' }],
+        'stat-sm': ['1.5rem', { lineHeight: '1.2' }],
+        'stat': ['2rem', { lineHeight: '1.2' }],
+        'stat-lg': ['2.5rem', { lineHeight: '1.1' }],
+        'stat-xl': ['3.5rem', { lineHeight: '1.05' }],
       },
       keyframes: {
         'accordion-down': {

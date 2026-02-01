@@ -4,6 +4,13 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ThemeToggle } from './theme-toggle'
+import { UserMenu } from './user-menu'
+
+interface User {
+  name?: string | null
+  email?: string | null
+  image?: string | null
+}
 
 // Navigation items with icons, paths, and module colors
 const mainNavItems = [
@@ -141,7 +148,7 @@ function CloseIcon({ className }: { className?: string }) {
   )
 }
 
-export function Navigation({ children }: { children: React.ReactNode }) {
+export function Navigation({ children, user }: { children: React.ReactNode; user?: User | null }) {
   const pathname = usePathname()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
@@ -247,8 +254,13 @@ export function Navigation({ children }: { children: React.ReactNode }) {
             </ul>
           </nav>
 
-          {/* Footer with theme toggle and branding */}
+          {/* Footer with user menu, theme toggle and branding */}
           <div className="border-t p-4 bg-muted/30">
+            {user && (
+              <div className="mb-3">
+                <UserMenu user={user} />
+              </div>
+            )}
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm text-muted-foreground">Theme</span>
               <div className="bg-muted rounded-lg">
@@ -266,6 +278,7 @@ export function Navigation({ children }: { children: React.ReactNode }) {
           <span className="text-xl font-bold bg-gradient-to-r from-primary to-purple-500 bg-clip-text text-transparent">Everything</span>
         </Link>
         <div className="flex items-center gap-1">
+          {user && <UserMenu user={user} />}
           <ThemeToggle />
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
