@@ -297,7 +297,7 @@ export default function Home() {
     : 0
 
   return (
-    <main className="flex min-h-screen flex-col p-4 md:p-8 pb-24 md:pb-8">
+    <main className="flex min-h-screen flex-col p-4 md:p-8 pb-14 md:pb-8">
       <div className="mx-auto w-full max-w-6xl">
         {/* Hero Section - Daily Summary */}
         <section className="mb-8 relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-6 md:p-8 border border-primary/10 animate-fade-in-up">
