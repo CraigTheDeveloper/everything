@@ -201,6 +201,25 @@ export default function BodyPage() {
     fetchData()
   }, [fetchData])
 
+  // Handle browser back button for photo modal
+  useEffect(() => {
+    if (selectedPhoto) {
+      // Push a state when modal opens
+      window.history.pushState({ photoModalOpen: true }, '')
+
+      const handlePopState = () => {
+        // Close modal when back button is pressed
+        setSelectedPhoto(null)
+      }
+
+      window.addEventListener('popstate', handlePopState)
+
+      return () => {
+        window.removeEventListener('popstate', handlePopState)
+      }
+    }
+  }, [selectedPhoto])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -327,7 +346,7 @@ export default function BodyPage() {
                   <div className="relative flex h-48 w-full items-center justify-center rounded-lg border-2 border-dashed bg-muted/50">
                     {photo ? (
                       <img
-                        src={photo.filePath}
+                        src={`/api${photo.filePath}`}
                         alt={`${type} view`}
                         className="h-full w-full rounded-lg object-cover"
                       />
@@ -400,7 +419,7 @@ export default function BodyPage() {
                                 className="h-full w-full"
                               >
                                 <img
-                                  src={photo.filePath}
+                                  src={`/api${photo.filePath}`}
                                   alt={`${type} view - ${dateKey}`}
                                   className="h-full w-full cursor-pointer object-cover transition-transform hover:scale-105"
                                 />
@@ -429,11 +448,11 @@ export default function BodyPage() {
         {selectedPhoto && (
           <div
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
-            onClick={() => setSelectedPhoto(null)}
+            onClick={() => window.history.back()}
           >
             <div className="relative max-h-[90vh] max-w-4xl">
               <img
-                src={selectedPhoto.filePath}
+                src={`/api${selectedPhoto.filePath}`}
                 alt={`${selectedPhoto.type} view`}
                 className="max-h-[90vh] rounded-lg object-contain"
               />
@@ -442,7 +461,7 @@ export default function BodyPage() {
                 {format(new Date(selectedPhoto.date), 'MMMM d, yyyy')}
               </div>
               <button
-                onClick={() => setSelectedPhoto(null)}
+                onClick={() => window.history.back()}
                 className="absolute right-2 top-2 rounded-full bg-black/50 p-2 text-white hover:bg-black/70"
               >
                 <svg
