@@ -75,3 +75,10 @@ Each module has accent colors defined in `tailwind.config.ts`:
 ## Photo Storage
 
 Progress photos stored in `/uploads/photos/` (gitignored). Database stores file paths. Three views per date: front, back, side.
+
+## Windows Commands
+
+When running Windows commands like `taskkill`, use double forward slashes for flags:
+```bash
+taskkill //PID 12345 //F
+```
