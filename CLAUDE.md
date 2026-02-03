@@ -22,13 +22,17 @@ Initial setup: `./init.sh` or manually run `npm install && cp .env.example .env 
 
 ## Architecture
 
-**Stack**: Next.js 14 + TypeScript, Tailwind CSS + shadcn/ui, Prisma + SQLite, Recharts
+**Stack**: Next.js 16 + TypeScript, Tailwind CSS + shadcn/ui, Prisma + SQLite, Recharts, NextAuth, next-themes
 
 **Structure**:
-- `src/app/(pages)/` - Feature modules: body, time, medication, pushups, dogs, oral, achievements
-- `src/app/api/` - REST endpoints matching each module plus `/gamification/*` and `/dashboard/*`
-- `src/components/ui/` - shadcn/ui components (form-inputs, loading-states, progress-ring, toaster)
-- `src/lib/utils.ts` - Utilities: `cn()`, `isToday()`, `xpForLevel()`, `getLevelTitle()`
+- `src/app/(app)/` - Feature modules: body, time, medication, pushups, dogs, oral, achievements
+- `src/app/(auth)/` - Authentication pages (login)
+- `src/app/api/` - REST endpoints matching each module plus `/gamification/*`, `/auth/*`, `/export`
+- `src/components/` - Navigation, theme providers, user menu
+- `src/components/ui/` - shadcn/ui components (form-inputs, loading-states, progress-ring, toaster, avatar, dropdown-menu)
+- `src/lib/utils.ts` - Utilities (see below)
+- `src/lib/prisma.ts` - Prisma client singleton
+- `src/lib/auth.ts` - NextAuth configuration
 - `prisma/schema.prisma` - Full database schema
 
 **Pattern**: Client components (`'use client'`) fetch data via `useEffect` + API routes. No Context API; local state only.
@@ -40,16 +44,29 @@ Initial setup: `./init.sh` or manually run `npm install && cp .env.example .env 
 - Date format: `yyyy-MM-dd` strings for comparisons
 - Historical data is read-only
 
+## Utility Functions
+
+`src/lib/utils.ts` exports:
+- `cn()` - Merge Tailwind classes
+- `isToday()` - Check if date is today
+- `getTodayDate()` - Get today at midnight
+- `formatDate()` - Format date for display
+- `xpForLevel()` - Calculate XP for level
+- `getLevelTitle()` - Get level name
+- `remainingDaysInYear()` - Days left in year
+- `dayOfYear()` - Current day number (1-365/366)
+
 ## Gamification System
 
 - **XP formula**: `Math.floor(100 * Math.pow(1.5, level - 1))`
-- **Level titles**: Novice (1-4) → Apprentice (5-9) → Dedicated (10-14) → Committed (15-19) → Unstoppable (20-29) → Master (30-39) → Legend (40+)
+- **Level titles**: Novice (1-4) -> Apprentice (5-9) -> Dedicated (10-14) -> Committed (15-19) -> Unstoppable (20-29) -> Master (30-39) -> Legend (40+)
 - **Streaks**: Global (perfect_day, showed_up) + module-specific
 - Points calculated in API routes, triggering achievement checks
 
 ## Database Models
 
 Key models in `prisma/schema.prisma`:
+- **Settings** - Theme and photo directory configuration
 - **DailyLog** - Daily aggregate points and perfect day flag
 - **BodyMetric/ProgressPhoto/BodyGoal** - Body tracking
 - **TimeCategory/TimeActivity/TimeEntry/TimeGoal** - Time tracking
@@ -61,8 +78,8 @@ Key models in `prisma/schema.prisma`:
 
 ## Module Colors
 
-Each module has accent colors defined in `tailwind.config.ts`:
-- Body (green), Time (blue), Medication (purple), Pushups (orange), Dogs (teal), Oral (pink)
+Each module has accent colors defined in `tailwind.config.ts` (actual HSL values in `globals.css`):
+- Body (purple), Time (blue), Medication (green), Pushups (orange), Dogs (gold/amber), Oral (cyan)
 
 ## API Conventions
 
@@ -71,6 +88,19 @@ Each module has accent colors defined in `tailwind.config.ts`:
 - Same-day validation in mutation endpoints
 - JSON responses with appropriate HTTP status codes
 - Points/achievements recalculated after data changes
+
+Additional endpoints:
+- `/api/auth/[...nextauth]` - NextAuth authentication
+- `/api/export` - Export all user data
+- `/api/uploads/[...path]` - Serve uploaded files
+
+## Authentication
+
+Uses NextAuth with credentials provider. Configuration in `src/lib/auth.ts`.
+
+## Theming
+
+Dark/light mode support via next-themes. Theme provider in `src/components/theme-provider.tsx`, toggle in `src/components/theme-toggle.tsx`.
 
 ## Photo Storage
 
