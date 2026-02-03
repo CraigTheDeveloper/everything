@@ -10,6 +10,7 @@ Complete the post-PR workflow to merge and clean up branches.
    - `--delete-branch` automatically deletes both local and remote branches
 
 2. **Switch to main and pull:**
-   - Run `git checkout main && git pull`
+   - Run `git checkout main && git fetch --prune && git pull`
+   - `--prune` removes stale remote-tracking refs
 
 3. **Confirm completion** by showing `git branch -a` and `git status`
