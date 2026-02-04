@@ -18,11 +18,21 @@ npm run db:generate      # Generate Prisma client
 npm run db:studio        # Prisma Studio (database GUI)
 ```
 
-Initial setup: `./init.sh` or manually run `npm install && cp .env.example .env && npx prisma generate && npx prisma db push && npm run seed`
+Initial setup (manual - recommended):
+```bash
+npm install
+cp .env.example .env
+# Edit .env: set DATABASE_URL="file:./dev.db" and configure Google OAuth credentials
+npx prisma generate
+npx prisma db push
+npm run seed
+```
+
+Note: `init.sh` exists but expects PostgreSQL. The project uses SQLite by default (see `prisma/schema.prisma`).
 
 ## Architecture
 
-**Stack**: Next.js 16 + TypeScript, Tailwind CSS + shadcn/ui, Prisma + SQLite, Recharts, NextAuth, next-themes
+**Stack**: Next.js 16 + TypeScript, Tailwind CSS 3.3 + shadcn/ui (Radix UI), Prisma + SQLite, Recharts 2.10, NextAuth 4.24 (Google OAuth), next-themes, date-fns
 
 **Structure**:
 - `src/app/(app)/` - Feature modules: body, time, medication, pushups, dogs, oral, achievements
@@ -43,6 +53,15 @@ Initial setup: `./init.sh` or manually run `npm install && cp .env.example .env 
 - Use `isToday()` from `src/lib/utils.ts` for validation
 - Date format: `yyyy-MM-dd` strings for comparisons
 - Historical data is read-only
+
+## Date Handling
+
+**Local dates only** - no timezone/UTC conversion:
+- Dates stored as local JS Date objects in SQLite
+- API parameters use `yyyy-MM-dd` string format
+- Date range queries use `gte` (start of day) and `lt` (start of next day)
+- Local date construction: `new Date(year, month - 1, day)`
+- Helper functions in API routes: `parseLocalDate()`, `getDateString()`, `formatDate()`
 
 ## Utility Functions
 
@@ -78,8 +97,15 @@ Key models in `prisma/schema.prisma`:
 
 ## Module Colors
 
-Each module has accent colors defined in `tailwind.config.ts` (actual HSL values in `globals.css`):
-- Body (purple), Time (blue), Medication (green), Pushups (orange), Dogs (gold/amber), Oral (cyan)
+Each module has accent colors defined in `tailwind.config.ts` (HSL values in `globals.css`):
+- **Body** (purple): 270° 60%
+- **Time** (blue): 221.2° 83.2%
+- **Medication** (green): 142.1° 76.2%
+- **Pushups** (orange): 24.6° 95%
+- **Dogs** (gold/amber): 37.7° 92.1%
+- **Oral** (cyan): 186.9° 71.6%
+
+Custom animations defined in tailwind config: `pulse-scale`, `celebrate`
 
 ## API Conventions
 
@@ -96,7 +122,14 @@ Additional endpoints:
 
 ## Authentication
 
-Uses NextAuth with credentials provider. Configuration in `src/lib/auth.ts`.
+Uses NextAuth with **Google OAuth** provider. Configuration in `src/lib/auth.ts`.
+
+**Key details**:
+- Single-user enforcement via `AUTH_ALLOWED_EMAIL` whitelist in `.env`
+- JWT session strategy with 30-day expiration
+- Custom sign-in/error pages at `/login`
+- Required env vars: `AUTH_SECRET`, `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`, `AUTH_ALLOWED_EMAIL`
+- Google Cloud Console redirect URI: `{NEXTAUTH_URL}/api/auth/callback/google`
 
 ## Theming
 
@@ -105,6 +138,18 @@ Dark/light mode support via next-themes. Theme provider in `src/components/theme
 ## Photo Storage
 
 Progress photos stored in `/uploads/photos/` (gitignored). Database stores file paths. Three views per date: front, back, side.
+
+## Environment Variables
+
+Required in `.env`:
+```
+DATABASE_URL="file:./dev.db"          # SQLite (default) or PostgreSQL connection
+AUTH_SECRET="..."                      # Generate with: openssl rand -base64 32
+AUTH_GOOGLE_ID="..."                   # Google OAuth client ID
+AUTH_GOOGLE_SECRET="..."               # Google OAuth client secret
+AUTH_ALLOWED_EMAIL="user@example.com"  # Single allowed user email
+NEXTAUTH_URL="http://localhost:3000"   # App URL (update for production)
+```
 
 ## Windows Commands
 
